@@ -6,7 +6,7 @@ spring:
      druid:
        username: root
        password: zhien0516
-       url: jdbc:mysql://192.168.81.129:3306/stock_db?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+       url: jdbc:mysql://192.168.81.131:3306/stock_db?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
        driver-class-name: com.mysql.jdbc.Driver
        # 初始化时建立物理连接的个数。初始化发生在显示调用 init 方法，或者第一次 getConnection 时
        initialSize: 6
@@ -17,6 +17,8 @@ spring:
        # 获取连接时最大等待时间，单位毫秒。配置了 maxWait 之后，缺省启用公平锁，
        # 并发效率会有所下降，如果需要可以通过配置 useUnfairLock 属性为 true 使用非公平锁。
        maxWait: 60000
+  profiles:
+    active: cache,stock #激活其他配置文件，若存在多个文件用，分割
 #配置mybatis数据源
 mybatis:
   mapper-locations: classpath:mapper/*.xml #配置加载mapper资源
@@ -28,4 +30,3 @@ mybatis:
 pagehelper:
   helper-dialect: mysql #配置分页的方言（即使用的数据库）
   reasonable: true #开启合理查询：即若超过最大页跳到最后一页，若查询-1页，默认查询第一页
-

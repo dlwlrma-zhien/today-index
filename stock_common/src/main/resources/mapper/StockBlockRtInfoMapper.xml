@@ -28,6 +28,22 @@
         from stock_block_rt_info
         where  id = #{id,jdbcType=BIGINT} 
     </select>
+    <select id="getStockRtInfo" resultType="com.lcyy.stock.pojo.domain.StockBlockDomain">
+        SELECT
+            company_num  AS companyNum,
+            trade_amount AS tradeAmt,
+            label        AS CODE,
+            avg_price    AS avgPrice,
+            block_name   AS NAME,
+            cur_time     AS CURDATE,
+            trade_volume AS tradeVol,
+            updown_rate  AS updownRate
+        FROM
+            stock_block_rt_info
+        WHERE cur_time= #{TimeData}
+        ORDER BY trade_volume DESC
+            LIMIT 10
+    </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from stock_block_rt_info

@@ -12,6 +12,7 @@ public enum ResponseCode{
     NO_RESPONSE_DATA(0,"无响应数据"),
     CHECK_CODE_NOT_EMPTY(0,"验证码不能为空"),
     CHECK_CODE_ERROR(0,"验证码错误"),
+    CHECK_CODE_TIMEOUT(0,"验证码已经过期，请重新刷新"),
     USERNAME_OR_PASSWORD_ERROR(0,"用户名或密码错误"),
     ACCOUNT_EXISTS_ERROR(0,"该账号已存在"),
     ACCOUNT_NOT_EXISTS(0,"该账号不存在"),

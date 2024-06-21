@@ -2,6 +2,8 @@ package com.lcyy.stock.vo.resp;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ApiModel("登录响应数据封装")
 public class LoginRespVo {
 
     /**
@@ -29,14 +32,19 @@ public class LoginRespVo {
      */
     //用户id
     @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "主键id")
     private long id;
 
     //用户名称
+    @ApiModelProperty(value = "用户姓名")
     private String username;
 
     //用户昵称
+    @ApiModelProperty(value = "用户昵称")
     private String nickName;
 
     //用户手机号
+    @ApiModelProperty(value = "用户手机号")
     private String phone;
+
 }

@@ -5,8 +5,14 @@ import com.lcyy.stock.service.UserService;
 import com.lcyy.stock.vo.req.LoginReqVo;
 import com.lcyy.stock.vo.resp.LoginRespVo;
 import com.lcyy.stock.vo.resp.R;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @author: dlwlrma
@@ -17,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api")
+@Api(tags = "用户相关接口处理器")
 public class UserController {
 
     /**
@@ -38,6 +45,10 @@ public class UserController {
      * @return com.lcyy.stock.pojo.entity.SysUser
      */
     @GetMapping("/user/{userName}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name",value = "用户名",type = "String",required = true,paramType = "path")
+    })
+    @ApiOperation(value = "根据用户名查询用户信息")
     public SysUser getUserByUserName(@PathVariable String userName){
         return userService.findByUserName(userName);
     }
@@ -49,9 +60,22 @@ public class UserController {
      * @param vo
      * @return com.lcyy.stock.vo.resp.R<com.lcyy.stock.vo.resp.LoginRespVo>
      */
+    @ApiOperation(value = "用户登录功能")
     @PostMapping("/login")
     public R<LoginRespVo> login(@RequestBody LoginReqVo vo){
         return userService.login(vo);
+    }
+
+    /**
+     * TODO: 生成图片验证码功能
+     * @author dlwlrma
+     * @date 2024/6/20 15:47
+     * @return com.lcyy.stock.vo.resp.R<java.util.Map>
+     */
+    @ApiOperation(value = "生成图片验证码")
+    @GetMapping("/captcha")
+    public R<Map> getCaptchaCode(){
+        return userService.getCaptchaCode();
     }
 
 }

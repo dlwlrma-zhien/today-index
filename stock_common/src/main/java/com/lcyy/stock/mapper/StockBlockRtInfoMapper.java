@@ -1,6 +1,11 @@
 package com.lcyy.stock.mapper;
 
+import com.lcyy.stock.pojo.domain.StockBlockDomain;
 import com.lcyy.stock.pojo.entity.StockBlockRtInfo;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
+import java.util.List;
 
 /**
 * @author 22818
@@ -22,4 +27,12 @@ public interface StockBlockRtInfoMapper {
 
     int updateByPrimaryKey(StockBlockRtInfo record);
 
+    /**
+     * TODO: 沪深两市板块分时行情数据查询，以交易时间和交易总金额降序查询，取前10条数据
+     * @author dlwlrma
+     * @date 2024/6/21 19:03
+     * @param lastDate
+     * @return java.util.List<com.lcyy.stock.pojo.domain.StockBlockDomain>
+     */
+    List<StockBlockDomain> getStockRtInfo(@Param("TimeData") Date lastDate);
 }
