@@ -1,6 +1,11 @@
 package com.lcyy.stock.mapper;
 
+import com.lcyy.stock.pojo.domain.OutMarketDomain;
 import com.lcyy.stock.pojo.entity.StockOuterMarketIndexInfo;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
+import java.util.List;
 
 /**
 * @author 22818
@@ -22,4 +27,13 @@ public interface StockOuterMarketIndexInfoMapper {
 
     int updateByPrimaryKey(StockOuterMarketIndexInfo record);
 
+    /**
+     * 获取国外最新股票数据展示
+     * @author dlwlrma
+     * @date 2024/6/22 14:03
+     * @param lastDate
+     * @param outMcodes
+     * @return java.util.List<com.lcyy.stock.pojo.domain.OutMarketDomain>
+     */
+    List<OutMarketDomain> getOutMarketInfo(@Param("lastDate") Date lastDate,@Param("marketCodes") List<String> outMcodes);
 }

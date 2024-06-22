@@ -31,6 +31,64 @@
         from stock_rt_info
         where  id = #{id,jdbcType=BIGINT} 
     </select>
+    <select id="getStockInfoByPage" resultType="com.lcyy.stock.pojo.domain.StockUpDownDomain">
+        SELECT
+            trade_amount AS tradeAmt,
+            pre_close_price AS preClosePrice,
+            (max_price - min_price) / pre_close_price AS amplitude,
+            stock_code AS CODE,
+            stock_name AS NAME,
+            cur_time AS CURDATE,
+            trade_volume AS tradeVol,
+            (cur_price - pre_close_price) AS upDown,
+            (cur_price - pre_close_price) / pre_close_price AS increase,
+            cur_price AS tradePrice
+        FROM
+            stock_rt_info AS sri
+        WHERE sri.cur_time = #{lastDate}
+        ORDER BY upDown DESC
+    </select>
+    <select id="getStockUpDownCount" resultType="map">
+        SELECT
+            tmp.time,
+            COUNT(*) AS COUNT
+        FROM
+            (SELECT
+            (cur_price - pre_close_price) / pre_close_price AS ud,
+            DATE_FORMAT(cur_time, '%Y%m%d%H%i') AS TIME
+            FROM
+            stock_rt_info
+            WHERE cur_time BETWEEN #{startDate}
+            AND #{endDate}
+            HAVING ud
+        <if test="flag==1">
+            >=0.1
+        </if>
+        <if test="flag==0">
+            &lt;=-0.1
+        </if>
+        ) AS tmp
+        GROUP BY tmp.time
+    </select>
+    <select id="getStockInnerBlock" resultType="com.lcyy.stock.pojo.domain.StockUpDownDomain">
+        SELECT
+            trade_amount AS tradeAmt,
+            pre_close_price AS preClosePrice,
+            (max_price- min_price)/pre_close_price AS amplitude,
+            stock_code AS CODE,
+            stock_name AS NAME,
+            cur_time  AS CURDATE,
+            trade_volume AS tradeVol,
+            (cur_price - pre_close_price) AS upDown,
+            (cur_price - pre_close_price)/ pre_close_price AS increase,
+            cur_price AS tradePrice
+        FROM
+            stock_rt_info
+        WHERE cur_time = #{lastDate}
+        ORDER BY increase DESC
+            LIMIT 4 ;
+    </select>
+
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from stock_rt_info
