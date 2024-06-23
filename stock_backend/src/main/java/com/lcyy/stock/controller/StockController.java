@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -97,5 +99,23 @@ public class StockController {
         return stockService.getStockInnerBlock();
     }
 
-
+    /**
+     * 导出指定页码的股票信息
+     * @author dlwlrma
+     * @date 2024/6/23 20:26
+     * @param page
+     * @param pageSize
+     * @param response
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", dataType = "int", name = "page", value = "当前页"),
+            @ApiImplicitParam(paramType = "query", dataType = "int", name = "pageSize", value = "每页大小")
+    })
+    @ApiOperation(value = "导出指定页码的股票信息", notes = "导出指定页码的股票信息", httpMethod = "GET")
+    @GetMapping("/stock/export")
+    public void exportStockUpDownInfo(@RequestParam(value = "page",required = false,defaultValue = "1")Integer page,
+                                      @RequestParam(value = "pageSize",required = false,defaultValue = "20")Integer pageSize,
+                                      HttpServletResponse response) throws IOException {
+         stockService.exportStockUpDownInfo(page,pageSize,response);
+    }
 }

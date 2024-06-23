@@ -8,6 +8,8 @@ import com.lcyy.stock.vo.resp.PageResult;
 import com.lcyy.stock.vo.resp.R;
 import io.swagger.annotations.ApiModel;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -53,4 +55,6 @@ public interface StockService {
      * @return com.lcyy.stock.vo.resp.R<java.util.List<com.lcyy.stock.pojo.domain.StockUpdownDomain>>
      */
     R<List<StockUpDownDomain>> getStockInnerBlock();
+
+    void exportStockUpDownInfo(Integer page, Integer pageSize, HttpServletResponse response) throws IOException;
 }

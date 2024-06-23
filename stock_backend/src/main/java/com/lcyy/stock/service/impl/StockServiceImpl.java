@@ -1,6 +1,8 @@
 package com.lcyy.stock.service.impl;
 
 
+import com.alibaba.excel.EasyExcel;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lcyy.stock.mapper.StockBlockRtInfoMapper;
@@ -20,12 +22,17 @@ import com.lcyy.stock.vo.resp.R;
 import com.lcyy.stock.vo.resp.ResponseCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,25 +45,26 @@ import java.util.Map;
  */
 @ApiModel(description = ": TODO: 股票服务实现")
 @Service
+@Slf4j
 public class StockServiceImpl implements StockService {
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty("注入StockInfoConfig")
     @Autowired
     private StockInfoConfig stockInfoConfig;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty("注入StockMarketIndexInfoMapper")
     @Autowired
     private StockMarketIndexInfoMapper stockMarketIndexInfoMapper;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty("注入StockBlockRtInfoMapper")
     @Autowired
     private StockBlockRtInfoMapper stockBlockRtInfoMapper;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty("注入StockOuterMarketIndexInfoMapper")
     @Autowired
     private StockOuterMarketIndexInfoMapper stockOuterMarketIndexInfoMapper;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty("注入StockRtInfoMapper")
     @Autowired
     private StockRtInfoMapper stockRtInfoMapper;
 
@@ -169,5 +177,30 @@ public class StockServiceImpl implements StockService {
             return R.error(ResponseCode.DATA_ERROR);
         }
         return R.ok(data);
+    }
+
+    @Override
+    public void exportStockUpDownInfo(Integer page, Integer pageSize, HttpServletResponse response) throws IOException {
+        //1.获取分页内容
+        R<PageResult<StockUpDownDomain>> info = this.getStockInfoByPage(page, pageSize);
+        List<StockUpDownDomain> rows = info.getData().getRows();
+        //2.将数据导出到excel中
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        try {
+            String fileName = URLEncoder.encode("股票信息采集表", "UTF-8");
+            response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+            EasyExcel.write(response.getOutputStream(), StockUpDownDomain.class).sheet("股票涨幅信息").doWrite(rows);
+        } catch (IOException e) {
+            //打印日志信息
+            log.error("当前页码：{}，每页大小：{}，当前时间：{}，异常信息：{}",page,pageSize,DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),e.getMessage());
+            //响应给前端
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            R<Object> error = R.error(ResponseCode.DATA_ERROR);
+            String string = new ObjectMapper().writeValueAsString(error);
+            response.getWriter().write(string);
+        }
     }
 }
