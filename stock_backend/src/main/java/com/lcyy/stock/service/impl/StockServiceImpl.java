@@ -203,4 +203,34 @@ public class StockServiceImpl implements StockService {
             response.getWriter().write(string);
         }
     }
+
+    @Override
+    public R<Map<String, List>> getCompareStockTradeAmt() {
+        //1.获取最新股票交易日日期范围
+        DateTime tEndTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        tEndTime = DateTime.parse("2022-01-03 14:40:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
+        //装换为jdk的date,tEndTimeDate 截止日期
+        Date tEndTimeDate = tEndTime.toDate();
+        //开盘时间
+        Date startDateTime = DateTimeUtil.getOpenDate(tEndTime).toDate();
+
+        //2..获取t-1日的时间范围
+        DateTime pretEndTime = DateTimeUtil.getPreviousTradingDay(DateTime.now());
+        pretEndTime = DateTime.parse("2022-01-02 14:40:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
+        Date pretEndTimeDate = pretEndTime.toDate();
+        //开盘时间
+        Date preStartDateTime = DateTimeUtil.getOpenDate(pretEndTime).toDate();
+
+        //3.调用mapper查询,查询t日
+        List<Map> tDate =  stockMarketIndexInfoMapper.getSumAmtInfo(startDateTime,tEndTimeDate,stockInfoConfig.getInner());
+        List<Map> preDate =  stockMarketIndexInfoMapper.getSumAmtInfo(preStartDateTime,pretEndTimeDate,stockInfoConfig.getInner());
+
+        //4.组装数据
+        HashMap<String, List> info = new HashMap<>();
+        info.put("amtList",tDate);
+        info.put("yesAmtList",preDate);
+
+        //5.返回给前端响应
+        return R.ok(info);
+    }
 }

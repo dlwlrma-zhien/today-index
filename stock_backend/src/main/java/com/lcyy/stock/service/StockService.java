@@ -57,4 +57,6 @@ public interface StockService {
     R<List<StockUpDownDomain>> getStockInnerBlock();
 
     void exportStockUpDownInfo(Integer page, Integer pageSize, HttpServletResponse response) throws IOException;
+
+    R<Map<String, List>> getCompareStockTradeAmt();
 }

@@ -108,8 +108,8 @@ public class StockController {
      * @param response
      */
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query", dataType = "int", name = "page", value = "当前页"),
-            @ApiImplicitParam(paramType = "query", dataType = "int", name = "pageSize", value = "每页大小")
+            @ApiImplicitParam(paramType = "query", dataType = "int", name = "page", value = ""),
+            @ApiImplicitParam(paramType = "query", dataType = "int", name = "pageSize", value = "")
     })
     @ApiOperation(value = "导出指定页码的股票信息", notes = "导出指定页码的股票信息", httpMethod = "GET")
     @GetMapping("/stock/export")
@@ -118,4 +118,17 @@ public class StockController {
                                       HttpServletResponse response) throws IOException {
          stockService.exportStockUpDownInfo(page,pageSize,response);
     }
+
+    /**
+     * 统计A股大盘T日和T-1日成交量对比功能（成交量为沪深两市成交量之和）
+     * @author dlwlrma
+     * @date 2024/6/26 16:48
+     * @return com.lcyy.stock.vo.resp.R<java.util.Map<java.lang.String,java.util.List>>
+     */
+    @ApiOperation(value = "统计A股大盘T日和T-1日成交量对比功能（成交量为沪深两市成交量之和）", notes = "统计A股大盘T日和T-1日成交量对比功能（成交量为沪深两市成交量之和）", httpMethod = "GET")
+    @GetMapping("/stock/tradeAmt")
+    public R<Map<String,List>> getCompareStockTradeAmt(){
+        return stockService.getCompareStockTradeAmt();
+    }
+
 }
