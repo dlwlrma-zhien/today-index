@@ -48,7 +48,7 @@ public interface StockRtInfoMapper {
      * @param flag 约定：0为跌停，1为涨停
      * @return java.util.List<java.util.Map>
      */
-    List<Map> getStockUpDownCount(@Param("startDate") DateTime startDate, @Param("endDate") Date endDate, @Param("flag") int flag);
+    List<Map> getStockUpDownCount(@Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("flag") int flag);
 
 
     /**
@@ -59,4 +59,6 @@ public interface StockRtInfoMapper {
      * @return java.util.List<com.lcyy.stock.pojo.domain.StockUpDownDomain>
      */
     List<StockUpDownDomain> getStockInnerBlock(@Param("lastDate") Date lastDate);
+
+    List<Map> getIncreaseRangeInfo(@Param("curDateTime") Date curDateTime);
 }

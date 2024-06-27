@@ -131,4 +131,16 @@ public class StockController {
         return stockService.getCompareStockTradeAmt();
     }
 
+    /**
+     * 统计当前时间下，A股在各个涨跌区间股票的数量
+     * @author dlwlrma
+     * @date 2024/6/27 14:36
+ * @return com.lcyy.stock.vo.resp.R<java.util.Map>
+     */
+    @ApiOperation(value = "统计当前时间下，A股在各个涨跌区间股票的数量", notes = "统计当前时间下，A股在各个涨跌区间股票的数量", httpMethod = "GET")
+    @GetMapping("/stock/updown")
+    public R<Map> getIncreaseRangeInfo(){
+        return stockService.getIncreaseRangeInfo();
+    }
+
 }

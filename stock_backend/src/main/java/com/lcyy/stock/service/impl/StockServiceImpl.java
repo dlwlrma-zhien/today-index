@@ -146,7 +146,7 @@ public class StockServiceImpl implements StockService {
         curDateTime = DateTime.parse("2022-01-06 14:25:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
 
         //2.获取最新交易点对应的开盘时间点
-        DateTime startDate = DateTimeUtil.getOpenDate(curDateTime);
+        Date startDate = DateTimeUtil.getOpenDate(curDateTime).toDate();
 
         //3.统计涨停数据
         List<Map> upList = stockRtInfoMapper.getStockUpDownCount(startDate,endDate,1);
@@ -232,5 +232,26 @@ public class StockServiceImpl implements StockService {
 
         //5.返回给前端响应
         return R.ok(info);
+    }
+
+    @Override
+    public R<Map> getIncreaseRangeInfo() {
+        //1.获取最新股票交时间
+        DateTime dateTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        dateTime = DateTime.parse("2022-01-06 09:55:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
+        Date curDateTime = dateTime.toDate();
+
+        //2.调用mapper方法查询
+       List<Map> info =  stockRtInfoMapper.getIncreaseRangeInfo(curDateTime);
+
+       //3.组装数据
+        HashMap<String, Object> map = new HashMap<>();
+        String curDateStr = new DateTime(curDateTime).toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
+        map.put("time",curDateStr);
+        map.put("infos",info);
+
+        //4.响应给前端
+        return R.ok(map);
+
     }
 }

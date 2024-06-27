@@ -59,4 +59,6 @@ public interface StockService {
     void exportStockUpDownInfo(Integer page, Integer pageSize, HttpServletResponse response) throws IOException;
 
     R<Map<String, List>> getCompareStockTradeAmt();
+
+    R<Map> getIncreaseRangeInfo();
 }
