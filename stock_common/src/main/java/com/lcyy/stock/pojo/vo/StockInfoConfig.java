@@ -1,5 +1,7 @@
 package com.lcyy.stock.pojo.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -10,6 +12,7 @@ import java.util.List;
  * @data 2024年06月21日 15:35
  * @Description: TODO: 定义股票相关信息封装
  */
+@ApiModel(description = ": TODO: 定义股票相关信息封装")
 @Data
 @ConfigurationProperties(prefix = "stock")
 public class StockInfoConfig {
@@ -21,6 +24,7 @@ public class StockInfoConfig {
      * @param null
      * @return null
      */
+    @ApiModelProperty("TODO: 国内A股大盘数据集合")
     private List<String> inner;
 
     /**
@@ -30,6 +34,17 @@ public class StockInfoConfig {
      * @param null
      * @return null
      */
+    @ApiModelProperty("TODO: 国外大盘数据集合")
     private List<String> outer;
+
+    /**
+     * 查询当前股票涨幅区间的顺序排列
+     * @author dlwlrma
+     * @date 2024/6/27 21:09
+     * @param null
+     * @return null
+     */
+    @ApiModelProperty("查询当前股票涨幅区间的顺序排列")
+    private List<String> upDownRange;
 
 }

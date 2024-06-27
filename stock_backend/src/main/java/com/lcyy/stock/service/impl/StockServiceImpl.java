@@ -9,10 +9,7 @@ import com.lcyy.stock.mapper.StockBlockRtInfoMapper;
 import com.lcyy.stock.mapper.StockMarketIndexInfoMapper;
 import com.lcyy.stock.mapper.StockOuterMarketIndexInfoMapper;
 import com.lcyy.stock.mapper.StockRtInfoMapper;
-import com.lcyy.stock.pojo.domain.InnerMarketDomain;
-import com.lcyy.stock.pojo.domain.OutMarketDomain;
-import com.lcyy.stock.pojo.domain.StockBlockDomain;
-import com.lcyy.stock.pojo.domain.StockUpDownDomain;
+import com.lcyy.stock.pojo.domain.*;
 
 import com.lcyy.stock.pojo.vo.StockInfoConfig;
 import com.lcyy.stock.service.StockService;
@@ -33,10 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author: dlwlrma
@@ -207,19 +201,25 @@ public class StockServiceImpl implements StockService {
     @Override
     public R<Map<String, List>> getCompareStockTradeAmt() {
         //1.获取最新股票交易日日期范围
-        DateTime tEndTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
-        tEndTime = DateTime.parse("2022-01-03 14:40:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
+        DateTime dateTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        DateTime openDate = DateTimeUtil.getLastDate4Stock(DateTime.now());
         //装换为jdk的date,tEndTimeDate 截止日期
-        Date tEndTimeDate = tEndTime.toDate();
+        Date tEndTimeDate = dateTime.toDate();
+        tEndTimeDate = DateTime.parse("2022-01-03 14:40:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+        Date startDateTime = openDate.toDate();
+        startDateTime = DateTime.parse("2022-01-03 09:30:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
         //开盘时间
-        Date startDateTime = DateTimeUtil.getOpenDate(tEndTime).toDate();
+
 
         //2..获取t-1日的时间范围
-        DateTime pretEndTime = DateTimeUtil.getPreviousTradingDay(DateTime.now());
-        pretEndTime = DateTime.parse("2022-01-02 14:40:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
-        Date pretEndTimeDate = pretEndTime.toDate();
-        //开盘时间
-        Date preStartDateTime = DateTimeUtil.getOpenDate(pretEndTime).toDate();
+        DateTime dateTime1 = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        DateTime openDate1 = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        //装换为jdk的date,tEndTimeDate 截止日期
+        Date pretEndTimeDate = dateTime1.toDate();
+        pretEndTimeDate =  DateTime.parse("2022-01-02 14:40:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+        Date preStartDateTime = openDate.toDate();
+        preStartDateTime = DateTime.parse("2022-01-02 09:30:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+
 
         //3.调用mapper查询,查询t日
         List<Map> tDate =  stockMarketIndexInfoMapper.getSumAmtInfo(startDateTime,tEndTimeDate,stockInfoConfig.getInner());
@@ -242,16 +242,77 @@ public class StockServiceImpl implements StockService {
         Date curDateTime = dateTime.toDate();
 
         //2.调用mapper方法查询
-       List<Map> info =  stockRtInfoMapper.getIncreaseRangeInfo(curDateTime);
+        List<Map> info =  stockRtInfoMapper.getIncreaseRangeInfo(curDateTime);
+        //获取有序的标题集合
+        List<String> range = stockInfoConfig.getUpDownRange();
+        //遍历集合
+        List<Map> list = new ArrayList<>();
+        for (String title : range) {
+            Map map = null;
+            for (Map m : info) {
+                if(m.containsValue(title)){
+                    map = m;
+                    break;
+                }
+            }
+            if (map == null) {
+                map = new HashMap();
+                map.put("count",0);
+                map.put("title",title);
+            }
+            list.add(map);
+        }
 
-       //3.组装数据
-        HashMap<String, Object> map = new HashMap<>();
+        //3.组装数据
+        HashMap<String, Object> mapinfo = new HashMap<>();
         String curDateStr = new DateTime(curDateTime).toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
-        map.put("time",curDateStr);
-        map.put("infos",info);
+        mapinfo.put("time",curDateStr);
+        mapinfo.put("infos",list);
 
         //4.响应给前端
-        return R.ok(map);
+        return R.ok(mapinfo);
 
+    }
+
+    /**
+     * 功能描述：查询单个个股的分时行情数据，也就是统计指定股票T日每分钟的交易数据；
+     * 如果当前日期不在有效时间内，则以最近的一个股票交易时间作为查询时间点
+     * @author dlwlrma
+     * @date 2024/6/27 21:40
+     * @param code
+     * @return com.lcyy.stock.vo.resp.R<java.util.List<com.lcyy.stock.pojo.domain.Stock4MinuteDomain>>
+     */
+    @Override
+    public R<List<Stock4MinuteDomain>> getStockScreenTimeSharing(String code) {
+        //1.获取股票最新时间交易点
+        DateTime dateTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        Date endTime = dateTime.toDate();
+        endTime = DateTime.parse("2021-12-30 14:47:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+
+        DateTime dateTime1 = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        Date startTime = dateTime1.toDate();
+        startTime = DateTime.parse("2021-12-30 09:30:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+
+        //2.查询
+        List<Stock4MinuteDomain> data = stockRtInfoMapper.getStockScreenTimeSharing(startTime,endTime,code);
+
+        //3.返回数据给前端
+        return R.ok(data);
+    }
+
+    @Override
+    public R<List<Stock4EvrDayDomain>> getScreenDkLine(String code) {
+        //1.获取最新念股票交易时间
+        DateTime dateTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        Date endTime = dateTime.toDate();
+        endTime = DateTime.parse("2022-01-07 15:00:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+
+        DateTime dateTime1 = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        Date startTime = dateTime1.toDate();
+        startTime = DateTime.parse("2022-01-01 09:30:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+        //2.调用mapper接口
+        List<Stock4EvrDayDomain> info = stockRtInfoMapper.getScreenDkLine(startTime,endTime,code);
+        //3.封装数据响应给前段
+        return R.ok(info);
     }
 }

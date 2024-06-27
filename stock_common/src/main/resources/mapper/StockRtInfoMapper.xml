@@ -114,6 +114,44 @@
             as tmp2 group by tmp2.title
         ]]>
     </select>
+    <select id="getStockScreenTimeSharing" resultType="com.lcyy.stock.pojo.domain.Stock4MinuteDomain">
+        select
+            sri.cur_time    as date,
+            sri.trade_amount as tradeAmt,
+            sri.stock_code as code,
+            sri.min_price as lowPrice,
+            sri.pre_close_price as preClosePrice,
+            sri.stock_name as name,
+            sri.max_price as highPrice,
+            sri.open_price as openPrice,
+            sri.trade_volume as tradeVol,
+            sri.cur_price as tradePrice
+        from stock_rt_info as sri
+        where sri.stock_code=#{code}
+          and sri.cur_time between #{startTime} and #{endTime}
+    </select>
+    <select id="getScreenDkLine" resultType="com.lcyy.stock.pojo.domain.Stock4EvrDayDomain">
+        select
+            date_format(sri2.cur_time,'%Y%m%d') as date,
+             sri2.trade_amount as tradeAmt,
+             sri2.stock_code as code,
+             sri2.min_price as lowPrice,
+             sri2.stock_name as name,
+             sri2.max_price as highPrice,
+             sri2.open_price as openPrice,
+             sri2.trade_volume as tradeVol,
+             sri2.cur_price as closePrice,
+             sri2.pre_close_price as preClosePrice
+        from stock_rt_info as sri2
+        where sri2.cur_time in (select
+            max(sri.cur_time) as max_time
+            from stock_rt_info as sri
+            where sri.stock_code=#{code}
+          and sri.cur_time between  #{startTime}   and	#{endTime}
+            group by date_format(sri.cur_time,'%Y%m%d'))
+          and sri2.stock_code=#{code}
+        order by sri2.cur_time
+    </select>
 
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">

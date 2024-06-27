@@ -1,9 +1,6 @@
 package com.lcyy.stock.service;
 
-import com.lcyy.stock.pojo.domain.InnerMarketDomain;
-import com.lcyy.stock.pojo.domain.OutMarketDomain;
-import com.lcyy.stock.pojo.domain.StockBlockDomain;
-import com.lcyy.stock.pojo.domain.StockUpDownDomain;
+import com.lcyy.stock.pojo.domain.*;
 import com.lcyy.stock.vo.resp.PageResult;
 import com.lcyy.stock.vo.resp.R;
 import io.swagger.annotations.ApiModel;
@@ -61,4 +58,8 @@ public interface StockService {
     R<Map<String, List>> getCompareStockTradeAmt();
 
     R<Map> getIncreaseRangeInfo();
+
+    R<List<Stock4MinuteDomain>> getStockScreenTimeSharing(String code);
+
+    R<List<Stock4EvrDayDomain>> getScreenDkLine(String code);
 }

@@ -1,5 +1,7 @@
 package com.lcyy.stock.mapper;
 
+import com.lcyy.stock.pojo.domain.Stock4EvrDayDomain;
+import com.lcyy.stock.pojo.domain.Stock4MinuteDomain;
 import com.lcyy.stock.pojo.domain.StockUpDownDomain;
 import com.lcyy.stock.pojo.entity.StockRtInfo;
 import io.swagger.annotations.ApiModel;
@@ -61,4 +63,8 @@ public interface StockRtInfoMapper {
     List<StockUpDownDomain> getStockInnerBlock(@Param("lastDate") Date lastDate);
 
     List<Map> getIncreaseRangeInfo(@Param("curDateTime") Date curDateTime);
+
+    List<Stock4MinuteDomain> getStockScreenTimeSharing(@Param("startTime") Date startTime,@Param("endTime") Date endTime,@Param("code") String code);
+
+    List<Stock4EvrDayDomain> getScreenDkLine(@Param("startTime") Date startTime,@Param("endTime") Date endTime,@Param("code") String code);
 }

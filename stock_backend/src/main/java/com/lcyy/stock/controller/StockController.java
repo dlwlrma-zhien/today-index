@@ -1,9 +1,6 @@
 package com.lcyy.stock.controller;
 
-import com.lcyy.stock.pojo.domain.InnerMarketDomain;
-import com.lcyy.stock.pojo.domain.OutMarketDomain;
-import com.lcyy.stock.pojo.domain.StockBlockDomain;
-import com.lcyy.stock.pojo.domain.StockUpDownDomain;
+import com.lcyy.stock.pojo.domain.*;
 import com.lcyy.stock.service.StockService;
 import com.lcyy.stock.vo.resp.PageResult;
 import com.lcyy.stock.vo.resp.R;
@@ -94,7 +91,7 @@ public class StockController {
      * @return com.lcyy.stock.vo.resp.R<java.util.List<com.lcyy.stock.pojo.domain.StockUpdownDomain>>
      */
     @ApiOperation(value = " 统计沪深两市个股最新交易数据，并按涨幅降序排序查询前4条数据", notes = " 统计沪深两市个股最新交易数据，并按涨幅降序排序查询前4条数据", httpMethod = "GET")
-    @GetMapping("stock/increase")
+    @GetMapping("/stock/increase")
     public R<List<StockUpDownDomain>> getStockInnerBlock(){
         return stockService.getStockInnerBlock();
     }
@@ -143,4 +140,35 @@ public class StockController {
         return stockService.getIncreaseRangeInfo();
     }
 
+    /**
+     * 获取指定股票的k线图
+     * @author dlwlrma
+     * @date 2024/6/27 22:28
+     * @param code
+     * @return com.lcyy.stock.vo.resp.R<java.util.List<com.lcyy.stock.pojo.domain.Stock4MinuteDomain>>
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", dataType = "string", name = "code", value = "", required = true)
+    })
+    @ApiOperation(value = "获取指定股票的k线图", notes = "获取指定股票的k线图", httpMethod = "GET")
+    @GetMapping("/stock/screen/time-sharing")
+    public R<List<Stock4MinuteDomain>> getStockScreenTimeSharing(@RequestParam(value = "code",required = true) String code){
+        return stockService.getStockScreenTimeSharing(code);
+    }
+
+    /**
+     * 单个个股日K 数据查询 ，可以根据时间区间查询数日的K线数据
+     * @author dlwlrma
+     * @date 2024/6/27 22:46
+     * @param code
+     * @return com.lcyy.stock.vo.resp.R<java.util.List<com.lcyy.stock.pojo.domain.Stock4EvrDayDomain>>
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", dataType = "string", name = "code", value = "", required = true)
+    })
+    @ApiOperation(value = "单个个股日K 数据查询 ，可以根据时间区间查询数日的K线数据", notes = "单个个股日K 数据查询 ，可以根据时间区间查询数日的K线数据", httpMethod = "GET")
+    @GetMapping("/stock/screen/dkline")
+    public R<List<Stock4EvrDayDomain>> getScreenDkline(@RequestParam(value = "code",required = true) String code){
+        return stockService.getScreenDkLine(code);
+    }
 }
