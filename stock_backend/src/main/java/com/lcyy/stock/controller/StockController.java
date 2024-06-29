@@ -171,4 +171,5 @@ public class StockController {
     public R<List<Stock4EvrDayDomain>> getScreenDkline(@RequestParam(value = "code",required = true) String code){
         return stockService.getScreenDkLine(code);
     }
+
 }
