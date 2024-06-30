@@ -1,6 +1,9 @@
 package com.lcyy.stock.pojo.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -11,6 +14,9 @@ import java.util.Date;
  * @TableName stock_rt_info
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class StockRtInfo implements Serializable {
     /**
      * 主键字段（无业务意义）

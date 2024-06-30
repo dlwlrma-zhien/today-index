@@ -47,4 +47,22 @@ public class StockInfoConfig {
     @ApiModelProperty("查询当前股票涨幅区间的顺序排列")
     private List<String> upDownRange;
 
+    /**
+     * 大盘，外盘，个股的公共的url
+     * @author dlwlrma
+     * @date 2024/6/30 13:13
+     */
+    @ApiModelProperty("大盘，外盘，个股的公共的url")
+    private String marketUrl;
+
+    /**
+     * 板块采集url
+     * @author dlwlrma
+     * @date 2024/6/30 13:14
+     * @param null
+     * @return null
+     */
+    @ApiModelProperty("板块采集url")
+    private String blockUrl;
+
 }

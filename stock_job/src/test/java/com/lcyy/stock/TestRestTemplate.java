@@ -1,6 +1,9 @@
 package com.lcyy.stock;
 
 import com.lcyy.stock.pojo.Account;
+import com.lcyy.stock.pojo.vo.StockInfoConfig;
+import com.lcyy.stock.service.StockTimerTaskService;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +27,9 @@ public class TestRestTemplate {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private StockTimerTaskService stockTimerTaskService;
 
     /**
      * 获取更加丰富的数据 使用getForEntity
@@ -91,7 +97,7 @@ public class TestRestTemplate {
         //组装模拟form表单提交数据，内部元素相当于form表单的input框
         LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
         map.add("id","10");
-        map.add("userName","itheima");
+        map.add("userName","dlwlrma");
         map.add("address","shanghai");
         HttpEntity<LinkedMultiValueMap<String, Object>> httpEntity = new HttpEntity<>(map, headers);
         /*
@@ -152,4 +158,11 @@ public class TestRestTemplate {
         System.out.println(resStr);
         System.out.println(cookies);
     }
+
+    @Test
+    public void test07(){
+//      stockTimerTaskService.getInnerMarketInfo();
+      stockTimerTaskService.getStockRtIndex();
+    }
+
 }

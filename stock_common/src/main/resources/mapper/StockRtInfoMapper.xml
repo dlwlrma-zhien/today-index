@@ -169,6 +169,21 @@
         ,#{minPrice,jdbcType=DECIMAL},#{maxPrice,jdbcType=DECIMAL},#{tradeAmount,jdbcType=BIGINT}
         ,#{tradeVolume,jdbcType=DECIMAL},#{curTime,jdbcType=TIMESTAMP})
     </insert>
+
+    <insert id="insertBatch">
+        insert into stock_rt_info
+        ( id,stock_code,stock_name
+        ,pre_close_price,open_price,cur_price
+        ,min_price,max_price,trade_amount
+        ,trade_volume,cur_time)
+        values
+          <foreach collection="list" item="info" separator=",">
+              (#{info.id,jdbcType=BIGINT},#{info.stockCode,jdbcType=CHAR},#{info.stockName,jdbcType=VARCHAR}
+              ,#{info.preClosePrice,jdbcType=DECIMAL},#{info.openPrice,jdbcType=DECIMAL},#{info.curPrice,jdbcType=DECIMAL}
+              ,#{info.minPrice,jdbcType=DECIMAL},#{info.maxPrice,jdbcType=DECIMAL},#{info.tradeAmount,jdbcType=BIGINT}
+              ,#{info.tradeVolume,jdbcType=DECIMAL},#{info.curTime,jdbcType=TIMESTAMP})
+          </foreach>
+    </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.lcyy.stock.pojo.entity.StockRtInfo" useGeneratedKeys="true">
         insert into stock_rt_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -198,6 +213,7 @@
                 <if test="curTime != null">#{curTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
+
     <update id="updateByPrimaryKeySelective" parameterType="com.lcyy.stock.pojo.entity.StockRtInfo">
         update stock_rt_info
         <set>

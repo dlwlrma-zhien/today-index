@@ -2,11 +2,10 @@ package com.lcyy.stock.config;
 
 import com.lcyy.stock.pojo.vo.StockInfoConfig;
 import com.lcyy.stock.utils.IdWorker;
+import com.lcyy.stock.utils.ParserStockInfoUtil;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author: dlwlrma
@@ -16,20 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableConfigurationProperties(StockInfoConfig.class)//像开关一样需要时候再开启
 public class CommonConfig {
-
     /**
-     * TODO: 密码加密匹配器，密码在数据库中存储的的是密文，而现实中是明文，因此使用密码匹配机制
-     * @author dlwlrma
-     * @date 2024/6/19 18:37
-     * @return org.springframework.security.crypto.password.PasswordEncoder
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
-    /**
-     * TODO： 基于雪花算法的工具类 保证sessionid 的唯一性
+     * TODO： 基于雪花算法的工具类 保证 session 的唯一性
      * @author dlwlrma
      * @date 2024/6/20 15:43
      * @return com.lcyy.stock.utils.IdWorker
@@ -45,5 +32,17 @@ public class CommonConfig {
          * @return com.lcyy.stock.utils.IdWorker
          */
         return new IdWorker(1l,2l);
+    }
+
+    /**
+     * 定义解析股票大盘，外盘，个股 板块的相关信息的bean
+     * @author dlwlrma
+     * @date 2024/6/30 17:27
+     * @param idWorker
+     * @return com.lcyy.stock.utils.ParserStockInfoUtil
+     */
+    @Bean
+    public ParserStockInfoUtil parserStockInfoUtil(IdWorker idWorker){
+        return new ParserStockInfoUtil(idWorker);
     }
 }

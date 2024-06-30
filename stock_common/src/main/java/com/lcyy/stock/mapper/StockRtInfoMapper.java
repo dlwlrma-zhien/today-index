@@ -67,4 +67,13 @@ public interface StockRtInfoMapper {
     List<Stock4MinuteDomain> getStockScreenTimeSharing(@Param("startTime") Date startTime,@Param("endTime") Date endTime,@Param("code") String code);
 
     List<Stock4EvrDayDomain> getScreenDkLine(@Param("startTime") Date startTime,@Param("endTime") Date endTime,@Param("code") String code);
+
+    /**
+     * 批量插入个股数据
+     * @author dlwlrma
+     * @date 2024/6/30 18:26
+     * @param list
+     * @return int
+     */
+    int insertBatch(@Param("list") List<StockRtInfo> list);
 }

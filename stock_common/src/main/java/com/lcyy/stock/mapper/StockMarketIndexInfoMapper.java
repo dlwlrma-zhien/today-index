@@ -46,4 +46,13 @@ public interface StockMarketIndexInfoMapper {
      * @return java.util.List<java.util.Map>
      */
     List<Map> getSumAmtInfo(@Param("openDate") Date openDate, @Param("EndDate")Date EndDate,@Param("marketCodes") List<String> marketCodes);
+
+    /**
+     * 批量插入数据（A股大盘集合）
+     * @author dlwlrma
+     * @date 2024/6/30 15:55
+     * @param entities
+     * @return int
+     */
+    int insertBatch(@Param("infos") List<StockMarketIndexInfo> entities);
 }
