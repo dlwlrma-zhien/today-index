@@ -161,8 +161,9 @@ public class TestRestTemplate {
 
     @Test
     public void test07(){
-//      stockTimerTaskService.getInnerMarketInfo();
-      stockTimerTaskService.getStockRtIndex();
+        //采集大盘信息
+      stockTimerTaskService.getInnerMarketInfo();
+//      stockTimerTaskService.getStockRtIndex();
     }
 
 }

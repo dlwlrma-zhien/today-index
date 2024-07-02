@@ -16,6 +16,7 @@ import com.sun.javafx.fxml.ParseTraceElement;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.A;
 import org.joda.time.DateTime;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -64,6 +65,9 @@ public class StockTimerTaskServiceImpl implements StockTimerTaskService {
 
     @Autowired
     private StockRtInfoMapper stockRtInfoMapper;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public void getInnerMarketInfo() {
@@ -143,6 +147,9 @@ public class StockTimerTaskServiceImpl implements StockTimerTaskService {
         //4.调用mybatis批量入库
         int count = stockMarketIndexInfoMapper.insertBatch(entities);
         if (count>0) {
+            //大盘数据采集完毕后通知backed工程刷新入库
+            //发送日期时间，接收方通过时间判断时间是否超时，能判断时间的延迟
+            rabbitTemplate.convertAndSend("stockExchange","Inner.Market",new Date());
             log.info("当前时间：{},{}插入大盘数据成功",DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),entities);
         }else {
             log.info("当亲时间：{}，{}插入大盘数据失败",DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),entities);

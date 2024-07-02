@@ -1,5 +1,7 @@
 package com.lcyy.stock.config;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +18,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  *                                      2.序列化内容体积比较大，太占内存
  */
 @Configuration
-public class RedisCacheConfig {
+public class CacheConfig {
 
     /**
      * TODO: 自定义模板对象，要保证Bean的名称必须叫redisTemplate，否则场景依赖会自定装配，导致相同类型的bean出现多个
@@ -41,7 +43,24 @@ public class RedisCacheConfig {
         //5.初始化参数设置
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
+    }
 
-
+    /**
+     * 构建缓存bean
+     * @return
+     */
+    @Bean
+    public Cache<String,Object> caffeineCache(){
+        Cache<String, Object> cache = Caffeine
+                .newBuilder()
+                //设置缓存数量上限
+                .maximumSize(200)
+//                .expireAfterAccess(1, TimeUnit.SECONDS)//访问1秒后删除
+//                .expireAfterWrite(1,TimeUnit.SECONDS)//写入1秒后删除
+                //初始的缓存空间大小
+                .initialCapacity(100)
+                .recordStats()//开启统计
+                .build();
+        return cache;
     }
 }
