@@ -1,0 +1,14 @@
+logging:
+    config: classpath:logback.xml
+xxl:
+    job:
+        accessToken: ''
+        admin:
+            addresses: http://192.168.81.132:8093/xxl-job-admin
+        executor:
+            address: ''
+            appname: lcyy-stock-executor
+            ip: ''
+            logpath: ./logs
+            logretentiondays: 30
+            port: 9998

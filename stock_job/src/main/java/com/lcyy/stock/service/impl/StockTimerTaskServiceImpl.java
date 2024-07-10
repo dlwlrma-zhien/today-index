@@ -22,6 +22,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import sun.security.mscapi.CPublicKey;
@@ -68,6 +69,9 @@ public class StockTimerTaskServiceImpl implements StockTimerTaskService {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Override
     public void getInnerMarketInfo() {
@@ -165,7 +169,73 @@ public class StockTimerTaskServiceImpl implements StockTimerTaskService {
         //将所有的大盘编码集合拆分为小的编码集合（分组45->15,15,10）
         //使用的谷歌 guava 工具包，可以将一个很大的集合拆分成若干的小的集合
         Lists.partition(allStockCodes,15).forEach(codes->{
-            //分批次采集,获取到的url地址
+            //每次来任务，就需要创建一个线程，复用性差；cpu的竞争过于激烈，导致频繁的上下文切换，性能降低
+            //原始方案采集个股数据数据分片，然后分批次进行采集效率不高，存在较高的数据延迟，引入多线程
+//            //分批次采集,获取到的url地址
+//            String url = stockInfoConfig.getMarketUrl() + String.join(",", codes);
+//            HttpHeaders headers = new HttpHeaders();
+//            //防盗链
+//            headers.add("Referer","https://finance.sina.com.cn/stock/");
+//            //添加用户标识
+//            headers.add("User-Agent","Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
+//            //维护http请求实体对象
+//            HttpEntity<Object> entity = new HttpEntity<>(headers);
+//            //发起请求
+//            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+//            if (responseEntity.getStatusCodeValue()!=200) {
+//                //当前请求失败
+//                log.error("当前时间点：{}，采集数据失败，http状态码：{}", DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),responseEntity.getStatusCodeValue());
+//                //通知相关人员
+//                return;
+//            }
+//            //获取js数据
+//            String body = responseEntity.getBody();
+//            //解析js，调用工具类
+//            List<StockRtInfo> list =  parserStockInfoUtil.parser4StockOrMarketInfo(body, ParseType.ASHARE);
+//            log.info("当前时间：{},{}成功",DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),list);
+//
+//            //批量插入
+//            int count = stockRtInfoMapper.insertBatch(list);
+//            if (count>0) {
+//                log.info("当前时间：{},{}插入个股数据成功",DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),list);
+//            }else {
+//                log.info("当亲时间：{}，{}插入个股数据失败",DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),list);
+//            }
+            new Thread(()->{
+//                //分批次采集,获取到的url地址
+//            String url = stockInfoConfig.getMarketUrl() + String.join(",", codes);
+//            HttpHeaders headers = new HttpHeaders();
+//            //防盗链
+//            headers.add("Referer","https://finance.sina.com.cn/stock/");
+//            //添加用户标识
+//            headers.add("User-Agent","Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
+//            //维护http请求实体对象
+//            HttpEntity<Object> entity = new HttpEntity<>(headers);
+//            //发起请求
+//            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+//            if (responseEntity.getStatusCodeValue()!=200) {
+//                //当前请求失败
+//                log.error("当前时间点：{}，采集数据失败，http状态码：{}", DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),responseEntity.getStatusCodeValue());
+//                //通知相关人员
+//                return;
+//            }
+//            //获取js数据
+//            String body = responseEntity.getBody();
+//            //解析js，调用工具类
+//            List<StockRtInfo> list =  parserStockInfoUtil.parser4StockOrMarketInfo(body, ParseType.ASHARE);
+//            log.info("当前时间：{},{}成功",DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),list);
+//
+//            //批量插入
+//            int count = stockRtInfoMapper.insertBatch(list);
+//            if (count>0) {
+//                log.info("当前时间：{},{}插入个股数据成功",DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),list);
+//            }else {
+//                log.info("当亲时间：{}，{}插入个股数据失败", DateTime.now().toString("yyyy-MM-dd HH:mm:ss"), list);
+//            }
+//            }).start();
+                //方案2，引入线程池
+                threadPoolTaskExecutor.execute(()->{
+                    //                //分批次采集,获取到的url地址
             String url = stockInfoConfig.getMarketUrl() + String.join(",", codes);
             HttpHeaders headers = new HttpHeaders();
             //防盗链
@@ -193,8 +263,10 @@ public class StockTimerTaskServiceImpl implements StockTimerTaskService {
             if (count>0) {
                 log.info("当前时间：{},{}插入个股数据成功",DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),list);
             }else {
-                log.info("当亲时间：{}，{}插入个股数据失败",DateTime.now().toString("yyyy-MM-dd HH:mm:ss"),list);
+                log.info("当亲时间：{}，{}插入个股数据失败", DateTime.now().toString("yyyy-MM-dd HH:mm:ss"), list);
             }
+            });
         });
+    });
     }
 }

@@ -17,5 +17,10 @@ public interface StockTimerTaskService {
      */
     void getInnerMarketInfo();
 
+    /**
+     * 个股大盘数据
+     * @author dlwlrma
+     * @date 2024/7/10 21:57
+     */
     void getStockRtIndex();
 }
