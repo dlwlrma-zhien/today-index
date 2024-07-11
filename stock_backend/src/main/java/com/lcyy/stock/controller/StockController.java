@@ -172,4 +172,84 @@ public class StockController {
         return stockService.getScreenDkLine(code);
     }
 
+    /**
+     * 股票code联想推荐功能
+     * @author dlwlrma
+     * @date 2024/7/11 15:10
+     * @return com.lcyy.stock.vo.resp.R<java.util.List<java.util.Map>>
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", dataType = "string", name = "searchStr", value = "")
+    })
+    @ApiOperation(value = "股票code联想推荐功能", notes = "股票code联想推荐功能", httpMethod = "GET")
+    @GetMapping("/stock/search")
+    public R<List<Map>> getCodesAndStockName(@RequestParam(value = "searchStr",required = false)String searchStr){
+        return stockService.getCodesAndStockName(searchStr);
+    }
+
+    /**
+     * 统计每周内的股票数据
+     * @author dlwlrma
+     * @date 2024/7/11 15:30
+     * @param code
+     * @return com.lcyy.stock.vo.resp.R<java.util.List<com.lcyy.stock.pojo.domain.Stock4WeeklineDomain>>
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", dataType = "string", name = "code", value = "", required = true)
+    })
+    @ApiOperation(value = "统计每周内的股票数据", notes = "统计每周内的股票数据", httpMethod = "GET")
+    @GetMapping("/stock/screen/weekkline")
+    public R<List<Stock4WeeklineDomain>> getScreenWkLine(@RequestParam("code") String code){
+        return stockService.getScreenWkLine(code);
+    }
+
+    /**
+     * 个股交易流水行情数据查询--查询最新交易流水，按照时间降序排序取前10
+     * @author dlwlrma
+     * @date 2024/7/11 16:16
+     * @param code
+     * @return com.lcyy.stock.vo.resp.R<java.util.List<com.lcyy.stock.pojo.domain.StockScreenSecondDomain>>
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", dataType = "string", name = "code", value = "", required = true)
+    })
+    @ApiOperation(value = "个股交易流水行情数据查询--查询最新交易流水，按照时间降序排序取前10", notes = "个股交易流水行情数据查询--查询最新交易流水，按照时间降序排序取前10", httpMethod = "GET")
+    @GetMapping("/stock/screen/second")
+    public R<List<StockScreenSecondDomain>> getStockSecond(@RequestParam("code") String code){
+        return stockService.getStockSecond(code);
+    }
+
+    /**
+     * 获取个股最新分时行情数据，主要包含：
+     * 	开盘价、前收盘价、最新价、最高价、最低价、成交金额和成交量、交易时间信息;
+     * @author dlwlrma
+     * @date 2024/7/11 16:40
+     * @param code
+     * @return com.lcyy.stock.vo.resp.R<com.lcyy.stock.pojo.domain.StockScreenDetailDomain>
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", dataType = "string", name = "code", value = "", required = true)
+    })
+    @ApiOperation(value = "获取个股最新分时行情数据", notes = "获取个股最新分时行情数", httpMethod = "GET")
+    @GetMapping("/stock/screen/second/detail")
+    public R<StockScreenDetailDomain> getStockDetail(@RequestParam(value = "code",required = true) String code){
+        return stockService.getStockDetail(code);
+    }
+
+    /**
+     * 个股主营业务
+     * @author dlwlrma
+     * @date 2024/7/11 17:04
+     * @param code
+     * @return com.lcyy.stock.vo.resp.R<com.lcyy.stock.pojo.domain.stockBusinessDomain>
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", dataType = "string", name = "code", value = "", required = true)
+    })
+    @ApiOperation(value = "个股主营业务", notes = "个股主营业务", httpMethod = "GET")
+    @GetMapping("/stock/describe")
+    public R<stockBusinessDomain> getDescribe(@RequestParam(value = "code",required = true) String code){
+        return stockService.getDescribe(code);
+    }
+
 }

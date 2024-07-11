@@ -1,8 +1,6 @@
 package com.lcyy.stock.mapper;
 
-import com.lcyy.stock.pojo.domain.Stock4EvrDayDomain;
-import com.lcyy.stock.pojo.domain.Stock4MinuteDomain;
-import com.lcyy.stock.pojo.domain.StockUpDownDomain;
+import com.lcyy.stock.pojo.domain.*;
 import com.lcyy.stock.pojo.entity.StockRtInfo;
 import io.swagger.annotations.ApiModel;
 import org.apache.ibatis.annotations.Param;
@@ -76,4 +74,19 @@ public interface StockRtInfoMapper {
      * @return int
      */
     int insertBatch(@Param("list") List<StockRtInfo> list);
+
+    /**
+     * 统计周k线
+     * @author dlwlrma
+     * @date 2024/7/11 15:40
+     * @param startTime
+     * @param endTime
+     * @param code
+     * @return java.util.List<com.lcyy.stock.pojo.domain.Stock4WeeklineDomain>
+     */
+    List<Stock4WeeklineDomain> getScreenWkLine(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("code") String code);
+
+    List<StockScreenSecondDomain> getStockSecond(@Param("code") String code);
+
+    StockScreenDetailDomain getStockDetail(@Param("startData") Date startData, @Param("code") String code);
 }

@@ -1,8 +1,11 @@
 package com.lcyy.stock.mapper;
 
+import com.lcyy.stock.pojo.domain.stockBusinessDomain;
 import com.lcyy.stock.pojo.entity.StockBusiness;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author 22818
@@ -31,4 +34,14 @@ public interface StockBusinessMapper {
      */
     List<String> getAllStockCodes();
 
+    /**
+     * 模糊查询联想推荐
+     * @author dlwlrma
+     * @date 2024/7/11 14:56
+     * @param charArray
+     * @return java.util.List<java.util.Map>
+     */
+    List<Map> getLinkCodes(@Param("charArray") char[] charArray);
+
+    stockBusinessDomain getDescribe(@Param("code") String code);
 }

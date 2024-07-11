@@ -62,4 +62,22 @@ public interface StockService {
     R<List<Stock4MinuteDomain>> getStockScreenTimeSharing(String code);
 
     R<List<Stock4EvrDayDomain>> getScreenDkLine(String code);
+
+    /**
+     * 模糊查询
+     *
+     * @param searchStr
+     * @return com.lcyy.stock.vo.resp.R<java.util.Map>
+     * @author dlwlrma
+     * @date 2024/7/11 14:23
+     */
+    R<List<Map>> getCodesAndStockName(String searchStr);
+
+    R<List<Stock4WeeklineDomain>> getScreenWkLine(String code);
+
+    R<List<StockScreenSecondDomain>> getStockSecond(String code);
+
+    R<StockScreenDetailDomain> getStockDetail(String code);
+
+    R<stockBusinessDomain> getDescribe(String code);
 }

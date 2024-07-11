@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.lcyy.stock.mapper.StockBlockRtInfoMapper;
-import com.lcyy.stock.mapper.StockMarketIndexInfoMapper;
-import com.lcyy.stock.mapper.StockOuterMarketIndexInfoMapper;
-import com.lcyy.stock.mapper.StockRtInfoMapper;
+import com.lcyy.stock.mapper.*;
 import com.lcyy.stock.pojo.domain.*;
 
 import com.lcyy.stock.pojo.vo.StockInfoConfig;
@@ -62,6 +59,9 @@ public class StockServiceImpl implements StockService {
     @ApiModelProperty("注入StockRtInfoMapper")
     @Autowired
     private StockRtInfoMapper stockRtInfoMapper;
+
+    @Autowired
+    private StockBusinessMapper stockBusinessMapper;
 
     /**
      * 注入本地缓存Bean
@@ -327,5 +327,80 @@ public class StockServiceImpl implements StockService {
         List<Stock4EvrDayDomain> info = stockRtInfoMapper.getScreenDkLine(startTime,endTime,code);
         //3.封装数据响应给前段
         return R.ok(info);
+    }
+
+    @Override
+    public R<List<Map>> getCodesAndStockName(String searchStr) {
+        //1.获取股票最新交易时间
+        DateTime startTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        Date startData = startTime.toDate();
+        startData = DateTime.parse("2020-06-05 19:39:53",DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+
+        //2.调用mappe接口
+        List<Map> list = stockBusinessMapper.getLinkCodes(searchStr.toCharArray());
+
+        //3.返回结果给前端
+        if(CollectionUtils.isEmpty(list)){
+            return R.error(ResponseCode.DATA_ERROR);
+        }
+        return R.ok(list);
+    }
+
+    @Override
+    public R<List<Stock4WeeklineDomain>> getScreenWkLine(String code) {
+        //1.获取最新股票交易时间
+        DateTime dateTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        Date endTime = dateTime.toDate();
+        Date startTime =dateTime.minusYears(5).toDate();
+
+        //2.调用mapper接口
+        List<Stock4WeeklineDomain> info = stockRtInfoMapper.getScreenWkLine(startTime,endTime,code);
+
+        //3.返回结果给前端
+        if(CollectionUtils.isEmpty(info)){
+            return R.error(ResponseCode.ERROR);
+        }
+        return R.ok(info);
+    }
+
+    @Override
+    public R<List<StockScreenSecondDomain>> getStockSecond(String code) {
+        //1.待用mapper接口
+        List<StockScreenSecondDomain> info =  stockRtInfoMapper.getStockSecond(code);
+
+        //返回给前端
+        if (CollectionUtils.isEmpty(info)) {
+            return R.error(ResponseCode.DATA_ERROR);
+        }
+        return R.ok(info);
+    }
+
+    @Override
+    public R<StockScreenDetailDomain> getStockDetail(String code) {
+        //1.获取当前交易时间
+        DateTime startTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        Date startData = startTime.toDate();
+        startData = DateTime.parse("2021-12-30 14:47:00",DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+
+        //2.调用mapper接口
+        StockScreenDetailDomain info =  stockRtInfoMapper.getStockDetail(startData,code);
+
+        //3.返回给前端
+        if (info == null) {
+            return R.error(ResponseCode.DATA_ERROR);
+        }
+        return R.ok(info);
+    }
+
+    @Override
+    public R<stockBusinessDomain> getDescribe(String code) {
+        //1.调用mappe集合
+        stockBusinessDomain info1 =  stockBusinessMapper.getDescribe(code);
+
+        //2.返回给前端
+        if (info1 == null) {
+            return R.error(ResponseCode.DATA_ERROR);
+        }
+        return R.ok(info1);
     }
 }

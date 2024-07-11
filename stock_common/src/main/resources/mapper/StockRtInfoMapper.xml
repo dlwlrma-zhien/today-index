@@ -152,6 +152,44 @@
           and sri2.stock_code=#{code}
         order by sri2.cur_time
     </select>
+    <select id="getScreenWkLine" resultType="com.lcyy.stock.pojo.domain.Stock4WeeklineDomain">
+        select avgPrice,
+               minPrice,
+               (select open_price from stock_rt_info where cur_time = miTime and stock_code = #{code}) as openPrice,
+               maxPrice,
+               (select cur_price from stock_rt_info where cur_time = mxTime and stock_code = #{code})  as closePrice,
+               mxTime,
+               stockCode
+        from (select avg(cur_price) as avgPrice,
+                     min(min_price) as minPrice,
+                     max(max_price) as maxPrice,
+                     min(cur_time)  as miTime,
+                     max(cur_time)  as mxTime,
+                     stock_code     as stockCode
+              from stock_rt_info
+              where cur_time between #{startTime} and #{endTime}
+                and stock_code = #{code}
+              group by date_format(cur_time, '%Y%u')) as t1
+    </select>
+    <select id="getStockSecond" resultType="com.lcyy.stock.pojo.domain.StockScreenSecondDomain">
+        select cur_time as date,trade_amount as tradeAmt,trade_volume as tradeVol,cur_price as tradePrice
+        from stock_rt_info
+        where stock_code=#{code}
+        order by cur_time desc
+            limit 10
+    </select>
+    <select id="getStockDetail" resultType="com.lcyy.stock.pojo.domain.StockScreenDetailDomain">
+        select trade_amount as tradeAmt,
+               pre_close_price as preClosePrice,
+               min_price as lowPrice,
+               max_price as highPrice,
+               open_price as openPrice,
+               trade_volume as tradeVol,
+               cur_price as tradePrice,
+               cur_time as curDate
+        from stock_rt_info
+        where cur_time=#{startData} and stock_code=#{code}
+    </select>
 
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
