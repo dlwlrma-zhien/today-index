@@ -1,6 +1,9 @@
 package com.lcyy.stock.mapper;
 
 import com.lcyy.stock.pojo.entity.SysUserRole;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author 22818
@@ -22,4 +25,7 @@ public interface SysUserRoleMapper {
 
     int updateByPrimaryKey(SysUserRole record);
 
+    List<String> getRolesIdByUser(@Param("userId") String s);
+
+    int updateUserRole(@Param("userRoles") List<SysUserRole> userRoles);
 }

@@ -1,6 +1,9 @@
 package com.lcyy.stock.pojo.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,6 +13,9 @@ import java.util.Date;
  * @TableName sys_user_role
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class SysUserRole implements Serializable {
     /**
      * 主键

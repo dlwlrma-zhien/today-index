@@ -47,6 +47,24 @@
         <include refid="Base_Column_List" />
         from sys_user
     </select>
+    <select id="getUsersInfoByMCondition" resultType="com.lcyy.stock.pojo.domain.SysUserDomain">
+        select <include refid="Base_Column_List" />,
+        (select t2.username from sys_user as t2 where t2.id = t1.create_id) as createUserName,
+        (select t2.username from sys_user as t2 where t2.id = t1.update_id) as updateUserName
+        from sys_user as t1
+        <where>
+            <if test="startTime!=null and endTime!=null">
+                and t1.create_time between #{startTime} and #{endTime}
+            </if>
+            <if test="username!=null and username.trim()!=''">
+                and t1.username like '%${username}%'
+            </if>
+            <if test="nickName!=null and nickName.trim()!=''">
+                and t1.username like '%${nickName}%'
+            </if>
+            and deleted=1
+        </where>
+    </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from sys_user
@@ -104,6 +122,18 @@
                 <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
+        <insert id="addUser">
+            insert into sys_user
+            ( id,username,password
+            ,phone,real_name,nick_name
+            ,email,status,sex,create_id
+            ,create_where,create_time
+            )
+            values (#{user.id,jdbcType=BIGINT},#{user.username,jdbcType=VARCHAR},#{user.password,jdbcType=VARCHAR}
+                   ,#{user.phone,jdbcType=VARCHAR},#{user.realName,jdbcType=VARCHAR},#{user.nickName,jdbcType=VARCHAR}
+                   ,#{user.email,jdbcType=VARCHAR},#{user.status,jdbcType=TINYINT},#{user.sex,jdbcType=TINYINT}
+                   ,#{user.createId,jdbcType=BIGINT},#{user.createWhere,jdbcType=TINYINT},now())
+        </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.lcyy.stock.pojo.entity.SysUser">
         update sys_user
         <set>

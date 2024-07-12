@@ -1,8 +1,10 @@
 package com.lcyy.stock.mapper;
 
+import com.lcyy.stock.pojo.domain.SysUserDomain;
 import com.lcyy.stock.pojo.entity.SysUser;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,4 +31,7 @@ public interface SysUserMapper {
     //查询所有信息
     List<SysUser> findAll();
 
+    List<SysUserDomain> getUsersInfoByMCondition(@Param("username") String userName, @Param("nickName") String nickName, @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+    int addUser(@Param("user") SysUser user);
 }

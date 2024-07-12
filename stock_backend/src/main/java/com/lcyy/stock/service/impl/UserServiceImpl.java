@@ -2,13 +2,19 @@ package com.lcyy.stock.service.impl;
 
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.lcyy.stock.constant.StockConstant;
 import com.lcyy.stock.mapper.SysUserMapper;
+import com.lcyy.stock.mapper.SysUserRoleMapper;
+import com.lcyy.stock.pojo.domain.SysUserDomain;
 import com.lcyy.stock.pojo.entity.SysUser;
+import com.lcyy.stock.pojo.entity.SysUserRole;
 import com.lcyy.stock.service.UserService;
 import com.lcyy.stock.utils.IdWorker;
-import com.lcyy.stock.vo.req.LoginReqVo;
+import com.lcyy.stock.vo.req.*;
 import com.lcyy.stock.vo.resp.LoginRespVo;
+import com.lcyy.stock.vo.resp.PageResult;
 import com.lcyy.stock.vo.resp.R;
 import com.lcyy.stock.vo.resp.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +24,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
+import java.util.List;
 /**
  * @author: dlwlrma
  * @data 2024年06月19日 16:29
@@ -51,6 +59,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
 
     @Override
     public SysUser findByUserName(String userName) {
@@ -140,5 +150,72 @@ public class UserServiceImpl implements UserService {
 
         //5.返回给前端
         return R.ok(data);
+    }
+
+    @Override
+    public R<PageResult<SysUserDomain>> getUsersInfoByMCondition(UserMconditionReqvo reqvo) {
+        //设置分页参数，getPageNum获取请求中的当前页码，getPageSize获取请求中的每页请求条数
+        PageHelper.startPage(reqvo.getPageNum(),reqvo.getPageSize());
+
+        List<SysUserDomain> info = sysUserMapper.getUsersInfoByMCondition(reqvo.getUserName(),reqvo.getNickName(),reqvo.getStartTime(),reqvo.getEndTime());
+        if (CollectionUtils.isEmpty(info)) {
+            return R.error(ResponseCode.ERROR);
+        }
+        PageInfo<SysUserDomain> pageInfo = new PageInfo<>(info);
+        PageResult<SysUserDomain> pageResult = new PageResult<>(pageInfo);
+        //返回响应结果
+        return R.ok(pageResult);
+    }
+
+    @Override
+    public R AddUserReqVo(AddUserReqVo reqVo) {
+        //1.先判断数据库中是否有该用户
+        SysUser dbUser = sysUserMapper.findUserInfoByUserName(reqVo.getUsername());
+        if (dbUser != null) {
+            //说明数据库中已有该用户，不能添加
+            return R.error(ResponseCode.ACCOUNT_EXISTS_ERROR);
+        }
+        SysUser user = new SysUser();
+        BeanUtils.copyProperties(reqVo,user);
+        user.setId(idWorker.nextId());
+        int i = sysUserMapper.addUser(user);
+        if(i>0){
+            return R.ok();
+        }
+        else {
+            return R.error(ResponseCode.DATA_ERROR);
+        }
+    }
+
+    @Override
+    public R updateUserRole(UpdateUserRoleReqVo reqVo) {
+        //1.获取用户的id
+        List<String> users = sysUserRoleMapper.getRolesIdByUser(String.valueOf(reqVo.getUserId()));
+        if (!CollectionUtils.isEmpty(users)) {
+            int i = sysUserRoleMapper.deleteByPrimaryKey(reqVo.getUserId());
+            if(i<=0){
+                return R.error(ResponseCode.ERROR);
+            }
+        }
+        List<SysUserRole> userRoles = new ArrayList<>();
+        for (Long roleId : reqVo.getRoleIds()) {
+            userRoles.add(SysUserRole.builder().id(idWorker.nextId()).roleId(roleId).build());
+        }
+        int j = sysUserRoleMapper.updateUserRole(userRoles);
+        if(j<=0){
+            return R.error(ResponseCode.ERROR);
+        }
+        return R.ok();
+    }
+
+    @Override
+    public R updateUser(UpdateUserInfoReqVo reqVo) {
+        SysUser dbUser = new SysUser();
+        BeanUtils.copyProperties(reqVo,dbUser);
+        int i = sysUserMapper.updateByPrimaryKeySelective(dbUser);
+        if(i<=0) {
+            return R.error(ResponseCode.ERROR);
+        }
+        return R.ok();
     }
 }
