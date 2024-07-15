@@ -1,0 +1,75 @@
+common:
+    sharding4db: com.lcyy.stock.sharding.CommonAlg4Db
+    sharding4tb: com.lcyy.stock.sharding.CommonAlg4Tb
+management:
+    health:
+        db:
+            enabled: false
+spring:
+    shardingsphere:
+        datasource:
+            df:
+                driver-class-name: com.mysql.jdbc.Driver
+                password: zhien0516
+                type: com.alibaba.druid.pool.DruidDataSource
+                url: jdbc:mysql://192.168.81.132:3306/stock_sys_db?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+                username: root
+            ds-2021:
+                driver-class-name: com.mysql.jdbc.Driver
+                password: zhien0516
+                type: com.alibaba.druid.pool.DruidDataSource
+                url: jdbc:mysql://192.168.81.132:3306/stock_db_2021?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+                username: root
+            ds-2022:
+                driver-class-name: com.mysql.jdbc.Driver
+                password: zhien0516
+                type: com.alibaba.druid.pool.DruidDataSource
+                url: jdbc:mysql://192.168.81.132:3306/stock_db_2022?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+                username: root
+            ds-2023:
+                driver-class-name: com.mysql.jdbc.Driver
+                password: zhien0516
+                type: com.alibaba.druid.pool.DruidDataSource
+                url: jdbc:mysql://192.168.81.132:3306/stock_db_2023?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&serverTimezone=Asia/Shanghai
+                username: root
+            names: df,ds-2021,ds-2022,ds-2023
+        props:
+            sql:
+                show: true
+        sharding:
+            broadcast-tables: stock_business
+            default-data-source-name: df
+            tables:
+                stock_block_rt_info:
+                    actual-data-nodes: ds-${2021..2022}.stock_block_rt_info
+                    database-strategy:
+                        standard:
+                            precise-algorithm-class-name: ${common.sharding4db}
+                            range-algorithm-class-name: ${common.sharding4db}
+                            sharding-column: cur_time
+                stock_market_index_info:
+                    actual-data-nodes: ds-${2021..2022}.stock_market_index_info
+                    database-strategy:
+                        standard:
+                            precise-algorithm-class-name: ${common.sharding4db}
+                            range-algorithm-class-name: ${common.sharding4db}
+                            sharding-column: cur_time
+                stock_outer_market_index_info:
+                    actual-data-nodes: ds-${2021..2022}.stock_outer_market_index_info
+                    database-strategy:
+                        standard:
+                            precise-algorithm-class-name: ${common.sharding4db}
+                            range-algorithm-class-name: ${common.sharding4db}
+                            sharding-column: cur_time
+                stock_rt_info:
+                    actual-data-nodes: ds-2021.stock_rt_info_${202101..202112},ds-2022.stock_rt_info_${202201..202212},ds-2023.stock_rt_info_${202301..202312}
+                    database-strategy:
+                        standard:
+                            precise-algorithm-class-name: ${common.sharding4db}
+                            range-algorithm-class-name: ${common.sharding4db}
+                            sharding-column: cur_time
+                    table-strategy:
+                        standard:
+                            precise-algorithm-class-name: ${common.sharding4tb}
+                            range-algorithm-class-name: ${common.sharding4tb}
+                            sharding-column: cur_time

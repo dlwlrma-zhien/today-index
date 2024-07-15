@@ -23,4 +23,18 @@ public interface StockTimerTaskService {
      * @date 2024/7/10 21:57
      */
     void getStockRtIndex();
+
+    /**
+     * 采集国外大盘
+     * @author dlwlrma
+     * @date 2024/7/15 20:23
+     */
+    void getOuterMarketInfo();
+
+    /**
+     * 采集板块
+     * @author dlwlrma
+     * @date 2024/7/15 20:23
+     */
+    void getStockBlockInfo();
 }

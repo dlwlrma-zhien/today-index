@@ -160,10 +160,11 @@ public class TestRestTemplate {
     }
 
     @Test
-    public void test07(){
+    public void test07() throws InterruptedException {
         //采集大盘信息
 //      stockTimerTaskService.getInnerMarketInfo();
       stockTimerTaskService.getStockRtIndex();
+      Thread.sleep(5000);
     }
 
 }

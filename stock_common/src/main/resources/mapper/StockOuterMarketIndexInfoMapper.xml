@@ -77,6 +77,19 @@
                 <if test="curTime != null">#{curTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
+    <insert id="insertBatch">
+        insert into stock_outer_market_index_info
+        ( id,market_code,market_name
+        ,cur_point,updown,rose
+        ,cur_time)
+        values
+        <foreach collection="infos" item="info" separator=",">
+            (#{info.id,jdbcType=BIGINT},#{info.marketCode,jdbcType=CHAR},#{info.marketName,jdbcType=VARCHAR}
+            ,#{info.curPoint,jdbcType=DECIMAL},#{info.updown,jdbcType=DECIMAL},#{info.rose,jdbcType=DECIMAL}
+            ,#{info.curTime,jdbcType=TIMESTAMP})
+        </foreach>
+
+    </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.lcyy.stock.pojo.entity.StockOuterMarketIndexInfo">
         update stock_outer_market_index_info
         <set>

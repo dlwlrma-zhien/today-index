@@ -323,8 +323,10 @@ public class StockServiceImpl implements StockService {
         DateTime dateTime1 = DateTimeUtil.getLastDate4Stock(DateTime.now());
         Date startTime = dateTime1.toDate();
         startTime = DateTime.parse("2022-01-01 09:30:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+
         //2.调用mapper接口
-        List<Stock4EvrDayDomain> info = stockRtInfoMapper.getScreenDkLine(startTime,endTime,code);
+        List<Date> times =stockRtInfoMapper.getLatestTime(code,startTime,endTime);
+        List<Stock4EvrDayDomain> info = stockRtInfoMapper.getScreenDkLine(code,times);
         //3.封装数据响应给前段
         return R.ok(info);
     }
@@ -351,10 +353,16 @@ public class StockServiceImpl implements StockService {
         //1.获取最新股票交易时间
         DateTime dateTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
         Date endTime = dateTime.toDate();
-        Date startTime =dateTime.minusYears(5).toDate();
+        endTime = DateTime.parse("2022-01-07 15:00:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+
+        DateTime dateTime1 = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        Date startTime = dateTime1.toDate();
+        startTime = DateTime.parse("2022-01-01 09:30:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
 
         //2.调用mapper接口
-        List<Stock4WeeklineDomain> info = stockRtInfoMapper.getScreenWkLine(startTime,endTime,code);
+//        List<Stock4WeeklineDomain> info = stockRtInfoMapper.getScreenWkLine(startTime,endTime,code);
+        List<Date> times = stockRtInfoMapper.getLatestTimes(code,startTime,endTime);
+        List<Stock4WeeklineDomain> info =  stockRtInfoMapper.getScreenWkLine(code,times);
 
         //3.返回结果给前端
         if(CollectionUtils.isEmpty(info)){

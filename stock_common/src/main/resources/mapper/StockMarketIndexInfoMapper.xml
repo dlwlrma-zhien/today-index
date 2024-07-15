@@ -91,13 +91,13 @@
         ,min_point,max_point,trade_amount
         ,trade_volume,cur_time)
         values
---             批量插入使用的forEach
-         <foreach collection="infos" item="info" separator=",">
-             (#{info.id,jdbcType=BIGINT},#{info.marketCode,jdbcType=CHAR},#{info.marketName,jdbcType=VARCHAR}
-             ,#{info.preClosePoint,jdbcType=DECIMAL},#{info.openPoint,jdbcType=DECIMAL},#{info.curPoint,jdbcType=DECIMAL}
-             ,#{info.minPoint,jdbcType=DECIMAL},#{info.maxPoint,jdbcType=DECIMAL},#{info.tradeAmount,jdbcType=BIGINT}
-             ,#{info.tradeVolume,jdbcType=DECIMAL},#{info.curTime,jdbcType=TIMESTAMP})
-         </foreach>
+        <foreach collection="infos" item="info" separator=",">
+            (#{info.id,jdbcType=BIGINT},#{info.marketCode,jdbcType=CHAR},#{info.marketName,jdbcType=VARCHAR}
+            ,#{info.preClosePoint,jdbcType=DECIMAL},#{info.openPoint,jdbcType=DECIMAL},#{info.curPoint,jdbcType=DECIMAL}
+            ,#{info.minPoint,jdbcType=DECIMAL},#{info.maxPoint,jdbcType=DECIMAL},#{info.tradeAmount,jdbcType=BIGINT}
+            ,#{info.tradeVolume,jdbcType=DECIMAL},#{info.curTime,jdbcType=TIMESTAMP})
+        </foreach>
+
 
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.lcyy.stock.pojo.entity.StockMarketIndexInfo" useGeneratedKeys="true">

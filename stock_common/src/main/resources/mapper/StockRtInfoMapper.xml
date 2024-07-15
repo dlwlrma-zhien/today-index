@@ -132,24 +132,22 @@
     </select>
     <select id="getScreenDkLine" resultType="com.lcyy.stock.pojo.domain.Stock4EvrDayDomain">
         select
-            date_format(sri2.cur_time,'%Y%m%d') as date,
-             sri2.trade_amount as tradeAmt,
-             sri2.stock_code as code,
-             sri2.min_price as lowPrice,
-             sri2.stock_name as name,
-             sri2.max_price as highPrice,
-             sri2.open_price as openPrice,
-             sri2.trade_volume as tradeVol,
-             sri2.cur_price as closePrice,
-             sri2.pre_close_price as preClosePrice
+        sri2.cur_time as date,
+        sri2.trade_amount as tradeAmt,
+        sri2.stock_code as code,
+        sri2.min_price as lowPrice,
+        sri2.stock_name as name,
+        sri2.max_price as highPrice,
+        sri2.open_price as openPrice,
+        sri2.trade_volume as tradeVol,
+        sri2.cur_price as closePrice,
+        sri2.pre_close_price as preClosePrice
         from stock_rt_info as sri2
-        where sri2.cur_time in (select
-            max(sri.cur_time) as max_time
-            from stock_rt_info as sri
-            where sri.stock_code=#{code}
-          and sri.cur_time between  #{startTime}   and	#{endTime}
-            group by date_format(sri.cur_time,'%Y%m%d'))
-          and sri2.stock_code=#{code}
+        where sri2.cur_time in
+        <foreach collection="times" item="time" open="(" separator="," close=")">
+            #{time}
+        </foreach>
+        and sri2.stock_code=#{code}
         order by sri2.cur_time
     </select>
     <select id="getScreenWkLine" resultType="com.lcyy.stock.pojo.domain.Stock4WeeklineDomain">
@@ -160,16 +158,13 @@
                (select cur_price from stock_rt_info where cur_time = mxTime and stock_code = #{code})  as closePrice,
                mxTime,
                stockCode
-        from (select avg(cur_price) as avgPrice,
-                     min(min_price) as minPrice,
-                     max(max_price) as maxPrice,
-                     min(cur_time)  as miTime,
-                     max(cur_time)  as mxTime,
-                     stock_code     as stockCode
-              from stock_rt_info
-              where cur_time between #{startTime} and #{endTime}
-                and stock_code = #{code}
-              group by date_format(cur_time, '%Y%u')) as t1
+        from stock_rt_info
+        where cur_time in
+        <foreach collection="times" item="time" open="(" separator="," close=")">
+            #{time}
+        </foreach>
+        and code = #{code}
+        order by cur_time
     </select>
     <select id="getStockSecond" resultType="com.lcyy.stock.pojo.domain.StockScreenSecondDomain">
         select cur_time as date,trade_amount as tradeAmt,trade_volume as tradeVol,cur_price as tradePrice
@@ -189,6 +184,26 @@
                cur_time as curDate
         from stock_rt_info
         where cur_time=#{startData} and stock_code=#{code}
+    </select>
+    <select id="getLatestTime" resultType="java.util.Date">
+        select
+            max(sri.cur_time) as max_time
+        from stock_rt_info as sri
+        where sri.stock_code=#{code}
+          and sri.cur_time between  #{startTime}   and	#{endTime}
+        group by date_format(sri.cur_time,'%Y%m%d')
+    </select>
+    <select id="getLatestTimes" resultType="java.util.Date">
+        select avg(cur_price) as avgPrice,
+               min(min_price) as minPrice,
+               max(max_price) as maxPrice,
+               min(cur_time)  as miTime,
+               max(cur_time)  as mxTime,
+               stock_code     as stockCode
+        from stock_rt_info
+        where cur_time between #{startTime} and #{endTime}
+          and stock_code = #{code}
+        group by date_format(cur_time, '%Y%u')
     </select>
 
 

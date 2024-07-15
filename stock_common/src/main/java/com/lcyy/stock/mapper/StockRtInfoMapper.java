@@ -64,7 +64,7 @@ public interface StockRtInfoMapper {
 
     List<Stock4MinuteDomain> getStockScreenTimeSharing(@Param("startTime") Date startTime,@Param("endTime") Date endTime,@Param("code") String code);
 
-    List<Stock4EvrDayDomain> getScreenDkLine(@Param("startTime") Date startTime,@Param("endTime") Date endTime,@Param("code") String code);
+//    List<Stock4EvrDayDomain> getScreenDkLine(@Param("startTime") Date startTime,@Param("endTime") Date endTime,@Param("code") String code);
 
     /**
      * 批量插入个股数据
@@ -79,14 +79,20 @@ public interface StockRtInfoMapper {
      * 统计周k线
      * @author dlwlrma
      * @date 2024/7/11 15:40
-     * @param startTime
-     * @param endTime
      * @param code
      * @return java.util.List<com.lcyy.stock.pojo.domain.Stock4WeeklineDomain>
      */
-    List<Stock4WeeklineDomain> getScreenWkLine(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("code") String code);
+//    List<Stock4WeeklineDomain> getScreenWkLine(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("code") String code);
 
     List<StockScreenSecondDomain> getStockSecond(@Param("code") String code);
 
     StockScreenDetailDomain getStockDetail(@Param("startData") Date startData, @Param("code") String code);
+
+    List<Stock4EvrDayDomain> getScreenDkLine(@Param("code") String code, @Param("times") List<Date> times);
+
+    List<Date> getLatestTime(@Param("code") String code, @Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+    List<Stock4WeeklineDomain> getScreenWkLine(@Param("code") String code, @Param("times") List<Date> times);
+
+    List<Date> getLatestTimes(@Param("code") String code, @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 }

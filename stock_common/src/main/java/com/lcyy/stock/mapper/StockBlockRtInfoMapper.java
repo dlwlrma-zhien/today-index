@@ -35,4 +35,6 @@ public interface StockBlockRtInfoMapper {
      * @return java.util.List<com.lcyy.stock.pojo.domain.StockBlockDomain>
      */
     List<StockBlockDomain> getStockRtInfo(@Param("TimeData") Date lastDate);
+
+    int insertBatch(@Param("list") List<StockBlockRtInfo> list);
 }

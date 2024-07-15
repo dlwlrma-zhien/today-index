@@ -36,4 +36,6 @@ public interface StockOuterMarketIndexInfoMapper {
      * @return java.util.List<com.lcyy.stock.pojo.domain.OutMarketDomain>
      */
     List<OutMarketDomain> getOutMarketInfo(@Param("lastDate") Date lastDate,@Param("marketCodes") List<String> outMcodes);
+
+    int insertBatch(@Param("entities") List<StockOuterMarketIndexInfo> entities);
 }

@@ -1,47 +1,65 @@
 package com.lcyy.stock.config;
 
 import com.lcyy.stock.pojo.vo.TaskThreadPoolInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.Map;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
-/**
- * @author: dlwlrma
- * @data 2024年07月10日 22:46
- * @Description: TODO:定义线程池的配置类
- */
-@Configuration
-public class TaskExecutePoolConfig {
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
+@Configuration
+@Slf4j
+public class TaskExecutePoolConfig {
     @Autowired
     private TaskThreadPoolInfo info;
 
     /**
-     * 构建线程池对象
-     * @author dlwlrma
-     * @date 2024/7/10 22:57
-     * @return org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+     * 定义任务执行器
+     *
+     * @return
      */
-    //"shutdown" 优雅关闭
-    @Bean(value = "threadPoolTaskExecutor",initMethod = "shutdown")
-    public ThreadPoolTaskExecutor threadPoolTaskExecutor(){
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        //设置核心线程数
-        executor.setCorePoolSize(info.getCorePoolSize());
-        //设置最大线程数
-        executor.setMaxPoolSize(info.getMaxPoolSize());
-        //设置空闲线程最大存活时间
-        executor.setKeepAliveSeconds(info.getKeepAliveSeconds());
-        //设置任务队列最大长度
-        executor.setQueueCapacity(info.getQueueCapacity());
+    @Bean(name = "threadPoolTaskExecutor", destroyMethod = "shutdown")
+    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+        //构建线程池对象
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        //核心线程数：核心线程数（获取硬件）：线程池创建时候初始化的线程数
+        taskExecutor.setCorePoolSize(info.getCorePoolSize());
+        //最大线程数：只有在缓冲队列满了之后才会申请超过核心线程数的线程
+        taskExecutor.setMaxPoolSize(info.getMaxPoolSize());
+        //缓冲队列：用来缓冲执行任务的队列
+        taskExecutor.setQueueCapacity(info.getQueueCapacity());
+        //允许线程的空闲时间：当超过了核心线程出之外的线程在空闲时间到达之后会被销毁
+        taskExecutor.setKeepAliveSeconds(info.getKeepAliveSeconds());
+        //线程名称前缀
+        taskExecutor.setThreadNamePrefix("StockThread-");
         //设置拒绝策略
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
-
-        //设置参数初始化
-        executor.initialize();
-        //返回线程池对象
-        return executor;
-    }}
+        taskExecutor.setRejectedExecutionHandler(rejectedExecutionHandler());
+        //参数初始化
+        taskExecutor.initialize();
+        return taskExecutor;
+    }
+    /**
+     * 自定义线程拒绝策略
+     * @return
+     */
+    @Bean
+    public RejectedExecutionHandler rejectedExecutionHandler() {
+        RejectedExecutionHandler errorHandler = new RejectedExecutionHandler() {
+            @Override
+            public void rejectedExecution(Runnable runnable, ThreadPoolExecutor executor) {
+                if (runnable instanceof StockTaskRunable) {
+                    StockTaskRunable r2= ((StockTaskRunable) runnable);
+                    Map<String, Object> infos = r2.getInfos();
+                    log.info("出现的异常的任务信息：{}",infos);
+                }
+            }
+        };
+        return errorHandler;
+    }
+}
