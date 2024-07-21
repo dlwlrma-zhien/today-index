@@ -1,6 +1,10 @@
 package com.lcyy.stock.mapper;
 
 import com.lcyy.stock.pojo.entity.SysPermission;
+import com.lcyy.stock.pojo.entity.SysRolePermission;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author 22818
@@ -22,4 +26,7 @@ public interface SysPermissionMapper {
 
     int updateByPrimaryKey(SysPermission record);
 
+    List<SysPermission> selectAll();
+
+    int insertPerms(@Param("perms") List<SysRolePermission> list);
 }

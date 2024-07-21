@@ -1,6 +1,10 @@
 package com.lcyy.stock.pojo.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,6 +14,9 @@ import java.util.Date;
  * @TableName sys_role_permission
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SysRolePermission implements Serializable {
     /**
      * 主键

@@ -93,6 +93,16 @@
                 <if test="deleted != null">#{deleted,jdbcType=TINYINT},</if>
         </trim>
     </insert>
+    <insert id="insertPerms">
+        insert into sys_role_permission
+        ( id,role_id,permission_id
+        ,create_time)
+        values
+        <foreach collection="perms" item="perm" separator=",">
+            (#{perm.id,jdbcType=BIGINT},#{perm.roleId,jdbcType=BIGINT},#{perm.permissionId,jdbcType=BIGINT}
+            ,now())
+        </foreach>
+    </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.lcyy.stock.pojo.entity.SysPermission">
         update sys_permission
         <set>
@@ -160,4 +170,9 @@
             deleted =  #{deleted,jdbcType=TINYINT}
         where   id = #{id,jdbcType=BIGINT} 
     </update>
+    <select id="selectAll" resultType="com.lcyy.stock.pojo.entity.SysPermission">
+        select <include refid="Base_Column_List" />
+        from sys_permission
+        where deleted=1
+    </select>
 </mapper>

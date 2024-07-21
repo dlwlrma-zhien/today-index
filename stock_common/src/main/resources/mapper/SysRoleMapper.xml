@@ -26,6 +26,11 @@
         from sys_role
         where  id = #{id,jdbcType=BIGINT} 
     </select>
+    <select id="selectAll" resultType="com.lcyy.stock.pojo.entity.SysRole">
+        select <include refid="Base_Column_List" />
+        from sys_role
+        where deleted=1
+    </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from sys_role
@@ -60,6 +65,12 @@
                 <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
                 <if test="deleted != null">#{deleted,jdbcType=TINYINT},</if>
         </trim>
+    </insert>
+    <insert id="addRole">
+        insert into sys_role
+        ( id,name,description
+        ,create_time)
+        values (#{role.id,jdbcType=BIGINT},#{role.name,jdbcType=VARCHAR},#{role.description,jdbcType=VARCHAR},now())
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.lcyy.stock.pojo.entity.SysRole">
         update sys_role

@@ -203,7 +203,7 @@
         from stock_rt_info
         where cur_time between #{startTime} and #{endTime}
           and stock_code = #{code}
-        group by date_format(cur_time, '%Y%u')
+        group by date_format(cur_time,'%Y%u')
     </select>
 
 
