@@ -28,4 +28,8 @@ public interface SysRoleMapper {
     List<SysRole> selectAll();
 
     int addRole(@Param("role") SysRole role);
+
+    int deleteRoles(@Param("roleId") String roleId);
+
+    int updateRoleStatus(@Param("roleId") String roleId, @Param("status") Integer status);
 }

@@ -36,6 +36,12 @@
         delete from sys_role
         where  id = #{id,jdbcType=BIGINT} 
     </delete>
+    <update id="deleteRoles">
+        update sys_role
+        set deleted=0,
+            update_time=now()
+        where id=#{roleId}
+    </update>
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.lcyy.stock.pojo.entity.SysRole" useGeneratedKeys="true">
         insert into sys_role
         ( id,name,description
@@ -106,5 +112,12 @@
             update_time =  #{updateTime,jdbcType=TIMESTAMP},
             deleted =  #{deleted,jdbcType=TINYINT}
         where   id = #{id,jdbcType=BIGINT} 
+    </update>
+    <update id="updateRoleStatus">
+        update sys_role
+        set
+            status =  #{status},
+            update_time = now()
+        where   id = #{roleId}
     </update>
 </mapper>

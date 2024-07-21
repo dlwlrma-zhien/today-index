@@ -13,6 +13,7 @@ import com.lcyy.stock.service.RoleService;
 import com.lcyy.stock.utils.IdWorker;
 import com.lcyy.stock.utils.ParsePerm;
 import com.lcyy.stock.vo.req.AddRolesAndPermsReqVo;
+import com.lcyy.stock.vo.req.UpdatePermsByRoleIdReqVo;
 import com.lcyy.stock.vo.resp.PageResult;
 import com.lcyy.stock.vo.resp.R;
 import com.lcyy.stock.vo.resp.ResponseCode;
@@ -84,6 +85,53 @@ public class RoleServiceImpl implements RoleService {
             if (j>0) {
                 return R.ok("操作成功！");
             }
+        }
+        return R.error(ResponseCode.ERROR);
+    }
+
+    @Override
+    public R<List<Long>> getPermsByRoleId(String roleId) {
+        List<Long> pemers = sysRolePermissionMapper.getPermsByRoleId(roleId);
+        if (CollectionUtils.isEmpty(pemers)) {
+            return R.error(ResponseCode.ERROR);
+        }
+        return R.ok(pemers);
+    }
+
+    @Override
+    public R updatePermsByRoleId(UpdatePermsByRoleIdReqVo reqVo) {
+       List<Long> perms = sysRolePermissionMapper.getPermsByRoleId(String.valueOf(reqVo.getId()));
+        if (!CollectionUtils.isEmpty(perms)) {
+            int i = sysRolePermissionMapper.deleteByRoleId(reqVo.getId());
+            if (i<=0) {
+                return R.error(ResponseCode.ERROR);
+            }
+        }
+        List<SysRolePermission> rolePermissions =  new ArrayList<>();
+        for (Long permissionId : reqVo.getPermissionsIds()){
+            rolePermissions.add(SysRolePermission.builder().id(idWorker.nextId()).roleId(reqVo.getId()).permissionId(permissionId).build());
+        }
+        int j = sysPermissionMapper.insertPerms(rolePermissions);
+        if (j>0) {
+            return R.ok("操作成功");
+        }
+        return R.error(ResponseCode.ERROR);
+    }
+
+    @Override
+    public R deleteRoles(String roleId) {
+       int i = sysRoleMapper.deleteRoles(roleId);
+        if (i>0) {
+            return R.ok(ResponseCode.SUCCESS);
+        }
+        return R.error(ResponseCode.ERROR);
+    }
+
+    @Override
+    public R updateRoleStatus(String roleId, Integer status) {
+        int i =sysRoleMapper.updateRoleStatus(roleId,status);
+        if (i>0) {
+            return R.ok("操作成功");
         }
         return R.error(ResponseCode.ERROR);
     }
