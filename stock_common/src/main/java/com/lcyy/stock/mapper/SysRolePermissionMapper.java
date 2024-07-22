@@ -28,4 +28,6 @@ public interface SysRolePermissionMapper {
     List<Long> getPermsByRoleId(@Param("roleId") String roleId);
 
     int deleteByRoleId(@Param("id") Long id);
+
+    void deleteByPermissionId(@Param("permissionId") Long permissionId);
 }

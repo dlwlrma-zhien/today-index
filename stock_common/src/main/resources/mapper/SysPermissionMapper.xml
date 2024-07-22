@@ -103,6 +103,20 @@
             ,now())
         </foreach>
     </insert>
+    <insert id="addPerms">
+        insert into sys_permission
+        ( id,code,title
+        ,icon,perms,url
+        ,method,name,pid
+        ,order_num,type
+        ,create_time
+        )
+        values (#{addPerms.id,jdbcType=BIGINT},#{addPerms.code,jdbcType=VARCHAR},#{addPerms.title,jdbcType=VARCHAR}
+               ,#{addPerms.icon,jdbcType=VARCHAR},#{addPerms.perms,jdbcType=VARCHAR},#{addPerms.url,jdbcType=VARCHAR}
+               ,#{addPerms.method,jdbcType=VARCHAR},#{addPerms.name,jdbcType=VARCHAR},#{addPerms.pid,jdbcType=BIGINT}
+               ,#{addPerms.orderNum,jdbcType=INTEGER},#{addPerms.type,jdbcType=TINYINT},now()
+               )
+    </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.lcyy.stock.pojo.entity.SysPermission">
         update sys_permission
         <set>
@@ -170,9 +184,28 @@
             deleted =  #{deleted,jdbcType=TINYINT}
         where   id = #{id,jdbcType=BIGINT} 
     </update>
+    <update id="updatePerms">
+        update sys_permission
+        set
+            code =  #{addPerms.code,jdbcType=VARCHAR},
+            title =  #{addPerms.title,jdbcType=VARCHAR},
+            icon =  #{addPerms.icon,jdbcType=VARCHAR},
+            perms =  #{addPerms.perms,jdbcType=VARCHAR},
+            url =  #{addPerms.url,jdbcType=VARCHAR},
+            method =  #{addPerms.method,jdbcType=VARCHAR},
+            name =  #{addPerms.name,jdbcType=VARCHAR},
+            pid =  #{addPerms.pid,jdbcType=BIGINT},
+            order_num =  #{addPerms.orderNum,jdbcType=INTEGER},
+            type =  #{addPerms.type,jdbcType=TINYINT},
+            update_time =  now()
+        where   id = #{addPerms.id,jdbcType=BIGINT}
+    </update>
     <select id="selectAll" resultType="com.lcyy.stock.pojo.entity.SysPermission">
         select <include refid="Base_Column_List" />
         from sys_permission
         where deleted=1
+    </select>
+    <select id="findChildrenCountByParentId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM sys_permission WHERE pid=#{permissionId} AND deleted=1
     </select>
 </mapper>

@@ -29,4 +29,10 @@ public interface SysPermissionMapper {
     List<SysPermission> selectAll();
 
     int insertPerms(@Param("perms") List<SysRolePermission> list);
+
+    int addPerms(@Param("addPerms") SysPermission addPerms);
+
+    int updatePerms(@Param("addPerms") SysPermission addPerms);
+
+    int findChildrenCountByParentId(@Param("permissionId") Long permissionId);
 }

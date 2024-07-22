@@ -37,6 +37,9 @@
         from sys_role_permission
         where role_id=#{id}
     </delete>
+    <delete id="deleteByPermissionId">
+        DELETE FROM sys_role_permission WHERE permission_id=#{permissionId}
+    </delete>
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.lcyy.stock.pojo.entity.SysRolePermission" useGeneratedKeys="true">
         insert into sys_role_permission
         ( id,role_id,permission_id
