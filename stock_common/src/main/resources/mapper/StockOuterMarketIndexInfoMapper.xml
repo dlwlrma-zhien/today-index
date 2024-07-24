@@ -27,25 +27,39 @@
         where  id = #{id,jdbcType=BIGINT} 
     </select>
     <select id="getOutMarketInfo" resultType="com.lcyy.stock.pojo.domain.OutMarketDomain">
-        SELECT
-            market_code AS CODE,
-            market_name AS NAME,
-            cur_point AS curPoint,
-            updown AS upDown,
-            rose,
-            cur_time
-        FROM
-            stock_outer_market_index_info
-        WHERE cur_time = #{lastDate}
-          AND market_code IN
-        <foreach collection="marketCodes" item="mCode" open="(" separator="," close=")">
-            #{mCode}
+<!--        SELECT-->
+<!--            market_code AS CODE,-->
+<!--            market_name AS NAME,-->
+<!--            cur_point AS curPoint,-->
+<!--            updown AS upDown,-->
+<!--            rose,-->
+<!--            cur_time-->
+<!--        FROM-->
+<!--            stock_outer_market_index_info-->
+<!--        WHERE cur_time = #{lastDate}-->
+<!--          AND market_code IN-->
+<!--        <foreach collection="marketCodes" item="mCode" open="(" separator="," close=")">-->
+<!--            #{mCode}-->
+<!--        </foreach>-->
+        select
+        market_name as name,
+        cur_point as curPoint,
+        updown as upDown,
+        rose,
+        cur_time as curTime
+        from stock_outer_market_index_info
+        where cur_time = #{lastDate}
+        and market_code in
+        <foreach collection="marketCodes" item="outer" separator="," open="(" close=")">
+            #{outer}
         </foreach>
+        order by cur_point desc
+        limit 4
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete from stock_outer_market_index_info
-        where  id = #{id,jdbcType=BIGINT} 
+        where  id = #{id,jdbcType=BIGINT}
     </delete>
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.lcyy.stock.pojo.entity.StockOuterMarketIndexInfo" useGeneratedKeys="true">
         insert into stock_outer_market_index_info
@@ -112,17 +126,17 @@
                     cur_time = #{curTime,jdbcType=TIMESTAMP},
                 </if>
         </set>
-        where   id = #{id,jdbcType=BIGINT} 
+        where   id = #{id,jdbcType=BIGINT}
     </update>
     <update id="updateByPrimaryKey" parameterType="com.lcyy.stock.pojo.entity.StockOuterMarketIndexInfo">
         update stock_outer_market_index_info
-        set 
+        set
             market_code =  #{marketCode,jdbcType=CHAR},
             market_name =  #{marketName,jdbcType=VARCHAR},
             cur_point =  #{curPoint,jdbcType=DECIMAL},
             updown =  #{updown,jdbcType=DECIMAL},
             rose =  #{rose,jdbcType=DECIMAL},
             cur_time =  #{curTime,jdbcType=TIMESTAMP}
-        where   id = #{id,jdbcType=BIGINT} 
+        where   id = #{id,jdbcType=BIGINT}
     </update>
 </mapper>

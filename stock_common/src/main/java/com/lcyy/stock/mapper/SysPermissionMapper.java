@@ -35,4 +35,6 @@ public interface SysPermissionMapper {
     int updatePerms(@Param("addPerms") SysPermission addPerms);
 
     int findChildrenCountByParentId(@Param("permissionId") Long permissionId);
+
+    List<SysPermission> getPermsByUserId(@Param("id") Long id);
 }

@@ -37,6 +37,7 @@ public class PermsController {
      */
     @ApiOperation(value = "查询所有权限集合", notes = "查询所有权限集合", httpMethod = "GET")
     @GetMapping("/permissions")
+
     public R<List<SysPermission>> getAllPerms(){
         return permsService.getAllPerms();
     }

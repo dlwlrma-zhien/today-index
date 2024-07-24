@@ -78,7 +78,7 @@ public class StockServiceImpl implements StockService {
        R<List<InnerMarketDomain>> result =(R<List<InnerMarketDomain>>) cache.get("innerMarketKey",key->{
            //1.获取最新股票交易时间点（精确到分钟，秒和毫秒置为0）
            Date curDate = DateTimeUtil.getLastDate4Stock(DateTime.now()).toDate();
-           curDate = DateTime.parse("2022-07-07 14:51:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+           curDate = DateTime.parse("2021-12-28 09:31:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
            //2.获取大盘编码集合
            List<String> mCodes = stockInfoConfig.getInner();
 

@@ -29,12 +29,14 @@
     </select>
 
     <select id="getLinkCodes" resultType="java.util.Map">
-        select stock_code as code,stock_name as name
+        select
+        stock_code as code,
+        stock_name as name
         from stock_business
-        where stock_code like 
-           <foreach collection="charArray" item="str" separator="or">
-               concat('%',#{str},'%')
-           </foreach>
+        where  stock_code like
+        <foreach collection="charArray"  item="str" separator="or">
+            concat('%',#{str},'%')
+        </foreach>
     </select>
     <select id="getDescribe" resultType="com.lcyy.stock.pojo.domain.stockBusinessDomain">
         select stock_code as code,block_name as trade,business,stock_name as name

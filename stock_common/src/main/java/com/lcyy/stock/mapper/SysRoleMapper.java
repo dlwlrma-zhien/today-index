@@ -32,4 +32,6 @@ public interface SysRoleMapper {
     int deleteRoles(@Param("roleId") String roleId);
 
     int updateRoleStatus(@Param("roleId") String roleId, @Param("status") Integer status);
+
+    List<SysRole> getRoleByUserId(@Param("id") Long id);
 }

@@ -29,20 +29,18 @@
         where  id = #{id,jdbcType=BIGINT} 
     </select>
     <select id="getStockRtInfo" resultType="com.lcyy.stock.pojo.domain.StockBlockDomain">
-        SELECT
-            company_num  AS companyNum,
-            trade_amount AS tradeAmt,
-            label        AS CODE,
-            avg_price    AS avgPrice,
-            block_name   AS NAME,
-            cur_time     AS CURDATE,
-            trade_volume AS tradeVol,
-            updown_rate  AS updownRate
-        FROM
-            stock_block_rt_info
-        WHERE cur_time= #{TimeData}
-        ORDER BY trade_volume DESC
-            LIMIT 10
+        select company_num  as companyNum,
+               trade_amount as tradeAmt,
+               label        as code,
+               avg_price    as avgPrice,
+               block_name   as name,
+               cur_time     as curDate,
+               trade_volume as tradeVol,
+               updown_rate  as updownRate
+        from stock_block_rt_info
+        where cur_time = #{TimeData}
+        order by trade_volume desc
+            limit 10;
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">

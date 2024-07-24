@@ -33,24 +33,23 @@
     </select>
     <select id="getMarketInfo" resultType="com.lcyy.stock.pojo.domain.InnerMarketDomain">
         SELECT
-            market_code AS CODE,
-            market_name AS NAME,
-            open_point AS openPoint,
-            cur_point AS curPoint,
-            pre_close_point AS preClosePoint,
-            trade_amount AS tradeAmt,
-            trade_volume AS tradeVol,
-            cur_point-pre_close_point AS upDown, #涨跌值
-            (cur_point-pre_close_point)/pre_close_point AS rose, #涨幅
-            (max_point-min_point)/pre_close_point AS amplitude, #振幅
-                cur_time AS CURTIME
-        FROM
-            stock_market_index_info
-        WHERE cur_time = #{curDate}
-          AND market_code IN
-        <foreach collection="marketCodes" item="mCode" open="(" separator="," close=")">
-            #{mCode}
+        market_code AS code,
+        market_name AS name,
+        open_point AS openPoint,
+        cur_point AS curPoint,
+        pre_close_point AS preClosePoint,
+        trade_amount AS tradeAmt,
+        trade_volume AS tradeVol,
+        cur_point-pre_close_point AS upDown,
+        (cur_point-pre_close_point)/pre_close_point AS rose,
+        (max_point-min_point)/pre_close_point AS amplitude,
+        cur_time AS curTime
+        FROM stock_market_index_info
+        WHERE market_code IN
+        <foreach collection="marketCodes" item="minner" open="(" separator="," close=")">
+            #{minner}
         </foreach>
+        AND cur_time =#{curDate}
     </select>
     <select id="getSumAmtInfo" resultType="java.util.Map">
         SELECT

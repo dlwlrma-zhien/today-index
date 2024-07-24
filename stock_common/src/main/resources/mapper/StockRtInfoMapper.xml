@@ -49,26 +49,19 @@
         ORDER BY upDown DESC
     </select>
     <select id="getStockUpDownCount" resultType="map">
-        SELECT
-            tmp.time,
-            COUNT(*) AS COUNT
-        FROM
-            (SELECT
-            (cur_price - pre_close_price) / pre_close_price AS ud,
-            DATE_FORMAT(cur_time, '%Y%m%d%H%i') AS TIME
-            FROM
-            stock_rt_info
-            WHERE cur_time BETWEEN #{startDate}
-            AND #{endDate}
-            HAVING ud
+        select count(*) as count, date_format(cur_time, '%Y%m%d%H%i') as time
+        from (select (cur_price - pre_close_price) / pre_close_price as up, cur_time
+        from stock_rt_info
+        where cur_time between #{startDate} and #{endDate}
+        having up
         <if test="flag==1">
             >=0.1
         </if>
-        <if test="flag==0">
+        <if test="flag==-1">
             &lt;=-0.1
         </if>
-        ) AS tmp
-        GROUP BY tmp.time
+        ) as temp
+        group by cur_time
     </select>
     <select id="getStockInnerBlock" resultType="com.lcyy.stock.pojo.domain.StockUpDownDomain">
         SELECT

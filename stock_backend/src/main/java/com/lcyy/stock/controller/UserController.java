@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -20,8 +21,8 @@ import java.util.Map;
  * @author: dlwlrma
  * @data 2024年06月19日 16:34
  * @Description: TODO: 定义用户web层接口管理bean
- * @ResponseBody:将实体对象转换位json格式字符串响应给前端：为序列化过程
- * @RequestBodty:将json格式字符串转换为实体对象：为反序列化过程
+ * @ResponseBody: 将实体对象转换位json格式字符串响应给前端：为序列化过程
+ * @RequestBodty: 将json格式字符串转换为实体对象：为反序列化过程
  */
 @Api(value = "/api", tags = {": TODO: 定义用户web层接口管理bean"})
 @RestController
@@ -94,6 +95,7 @@ public class UserController {
             @ApiImplicitParam(paramType = "body", dataType = "UserMconditionReqvo", name = "reqvo", value = "", required = true)
     })
     @ApiOperation(value = "多条件综合查询分页信息，条件包含：分页信息，用户创建日期范围", notes = "多条件综合查询分页信息，条件包含：分页信息，用户创建日期范围", httpMethod = "POST")
+    @PreAuthorize("hasAuthority('sys:user:list')")
     @PostMapping("/users")
     public R<PageResult<SysUserDomain>> getUsersInfoByMCondition(@RequestBody UserMconditionReqvo reqvo){
         return userService.getUsersInfoByMCondition(reqvo);

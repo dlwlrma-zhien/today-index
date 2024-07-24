@@ -208,4 +208,13 @@
     <select id="findChildrenCountByParentId" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM sys_permission WHERE pid=#{permissionId} AND deleted=1
     </select>
+    <select id="getPermsByUserId" resultType="com.lcyy.stock.pojo.entity.SysPermission">
+        select distinct <include refid="Base_Column_List" />
+        from sys_permission
+        where id in (select permission_id
+        from sys_role_permission
+        where role_id in (select sys_user_role.role_id
+        from sys_user_role
+        where user_id=#{id}))
+    </select>
 </mapper>
