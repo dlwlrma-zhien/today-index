@@ -1,0 +1,20 @@
+version: "3.2"
+
+services:
+  stockbackend:
+    environment:
+      TZ: Asia/Shanghai
+    build: ./backend
+    image: stockbackend:1.0
+    container_name: stockbackend_container
+    ports:
+      - "8091:8091"
+  stockjob:
+    environment:
+      TZ: Asia/Shanghai
+    build: ./job
+    image: stockjob:1.0
+    container_name: stockjob_container
+    ports:
+      - "8092:8092"
+      - "9998:9998"

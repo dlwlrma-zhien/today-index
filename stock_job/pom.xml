@@ -64,11 +64,14 @@
 
     <build>
         <!--打包名称-->
-        <finalName>${project.artifactId}</finalName>
+        <finalName>app</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <outputDirectory>../docker/job</outputDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>
