@@ -2,6 +2,7 @@ package com.lcyy.stock.service.impl;
 
 import com.google.common.collect.Lists;
 import com.lcyy.stock.config.StockTaskRunable;
+import com.lcyy.stock.face.StockCacheFace;
 import com.lcyy.stock.mapper.*;
 import com.lcyy.stock.pojo.entity.StockBlockRtInfo;
 import com.lcyy.stock.pojo.entity.StockMarketIndexInfo;
@@ -80,6 +81,9 @@ public class StockTimerTaskServiceImpl implements StockTimerTaskService {
 
     @Autowired
     private StockBlockRtInfoMapper stockBlockRtInfoMapper;
+
+    @Autowired
+    private StockCacheFace stockCacheFace;
 
     @Override
     public void getInnerMarketInfo() {
@@ -188,9 +192,11 @@ public class StockTimerTaskServiceImpl implements StockTimerTaskService {
     @Override
     public void getStockRtIndex() {
         //获取所有的个股结合
-        List<String> allStockCodes = stockBusinessMapper.getAllStockCodes();
-        //收集到的编码没有前缀编码，因此转换为有前缀编码的
-        allStockCodes = allStockCodes.stream().map(code -> code.startsWith("6") ? "sh" + code : "sz" + code).collect(Collectors.toList());
+        //使用springcache缓存方案
+        List<String> allStockCodes = stockCacheFace.getAllStockCodeWithPredix();
+//        List<String> allStockCodes = stockBusinessMapper.getAllStockCodes();
+//        //收集到的编码没有前缀编码，因此转换为有前缀编码的
+//        allStockCodes = allStockCodes.stream().map(code -> code.startsWith("6") ? "sh" + code : "sz" + code).collect(Collectors.toList());
         //将所有的大盘编码集合拆分为小的编码集合（分组45->15,15,10）
         //使用的谷歌 guava 工具包，可以将一个很大的集合拆分成若干的小的集合
         Lists.partition(allStockCodes, 15).forEach(codes -> {
