@@ -77,4 +77,5 @@ public interface UserService {
      * @return com.lcyy.stock.vo.resp.R
      */
     R updateUser(UpdateUserInfoReqVo reqVo);
+
 }
